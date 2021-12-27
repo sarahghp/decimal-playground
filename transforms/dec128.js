@@ -7,10 +7,10 @@ const opToName = {
   '/': 'div',
 };
 
-const includedOps = Object.keys(opToName);
+const includedOps = new Map(Object.entries(opToName));
 
-const isDecimalOrBinaryExpBare = (t) => (node) => {
-  return isDecimal(node) || t.isBinaryExpression(node);
+const isDecimalOrBinaryExpBare = (t) => (path) => {
+  return isDecimal(path) || t.isBinaryExpression(path);
 };
 
 const areMixedTypesBare = (isDecimalOrBinaryExp) => (a, b) => {
@@ -19,8 +19,15 @@ const areMixedTypesBare = (isDecimalOrBinaryExp) => (a, b) => {
     || !(isDecimalOrBinaryExp(a) && isDecimalOrBinaryExp(b))
 };
 
-const isDecimal = (node) => {
-  return node.get('callee').isIdentifier({name: 'Decimal'}) || node.type === DECIMAL_LITERAL;
+const isDecimal = (path) => {
+
+  /* There is a better way to do this, but optional chaining is not working with ASTExplorer just now. */
+
+  if (!path.isCallExpression() && !path.type === DECIMAL_LITERAL) {
+    return false;
+  }
+
+  return path.type === DECIMAL_LITERAL || path.get('callee').isIdentifier({name: 'Decimal'});
 };
 
 const replaceWithDecimalExpression = (t) => (path) => {
@@ -34,11 +41,11 @@ const replaceWithDecimalExpression = (t) => (path) => {
   }
 
   if (areMixedTypes(path.get('left'), path.get('right'))) {
-    throw new Error ('Mixed numeric types are not allowed.');
+    throw path.buildCodeFrameError(new SyntaxError('Mixed numeric types are not allowed.'));
   }
 
-  if (!includedOps.includes(operator)) {
-    throw new Error (`${operator} is not currently supported.`);
+  if (!includedOps.has(operator)) {
+    throw path.buildCodeFrameError(new SyntaxError(`${operator} is not currently supported.`));
   }
 
   const member = t.memberExpression(
