@@ -55,8 +55,11 @@ const replaceWithDecimal = (t) => (path) => {
 };
 
 const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
-  knownDecimalNodes.add(path.node);
+  if (path.get('callee').isIdentifier({name: 'Decimal'})) {
+    knownDecimalNodes.add(path.node);
+  }
 };
+
 
 export default function (babel) {
   const { types: t } = babel;
