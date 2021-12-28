@@ -66,7 +66,7 @@ export default function (babel) {
   const knownDecimalNodes = new WeakSet();
 
   return {
-    name: "decimal-transform",
+    name: "plugin-decimal-128",
     manipulateOptions(opts, parserOpts) {
      parserOpts.plugins.push("decimal");
     },
