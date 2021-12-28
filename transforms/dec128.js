@@ -1,14 +1,13 @@
 const opToName = {
-  '+': 'add',
-  '*': 'mul',
-  '-': 'sub',
-  '/': 'div',
+  "+": "add",
+  "*": "mul",
+  "-": "sub",
+  "/": "div",
 };
 
 const includedOps = new Map(Object.entries(opToName));
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
-
   const { left, right, operator } = path.node;
 
   const leftIsDecimal = knownDecimalNodes.has(left);
@@ -19,22 +18,20 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   }
 
   if (leftIsDecimal !== rightIsDecimal) {
-    throw path.buildCodeFrameError(new SyntaxError('Mixed numeric types are not allowed.'));
+    throw path.buildCodeFrameError(
+      new SyntaxError("Mixed numeric types are not allowed.")
+    );
   }
 
   if (!includedOps.has(operator)) {
-    throw path.buildCodeFrameError(new SyntaxError(`${operator} is not currently supported.`));
+    throw path.buildCodeFrameError(
+      new SyntaxError(`${operator} is not currently supported.`)
+    );
   }
 
-  const member = t.memberExpression(
-    left,
-    t.identifier(opToName[operator])
-  );
+  const member = t.memberExpression(left, t.identifier(opToName[operator]));
 
-  const newNode = t.callExpression(
-    member,
-    [right]
-  );
+  const newNode = t.callExpression(member, [right]);
 
   knownDecimalNodes.add(newNode);
 
@@ -43,21 +40,17 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 };
 
 const replaceWithDecimal = (t) => (path) => {
-
   const num = t.stringLiteral(path.node.value);
-  const callee = t.identifier('Decimal');
+  const callee = t.identifier("Decimal");
 
-  path.replaceWith(
-    t.callExpression(callee, [num])
-  );
+  path.replaceWith(t.callExpression(callee, [num]));
 };
 
 const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
-  if (path.get('callee').isIdentifier({name: 'Decimal'})) {
+  if (path.get("callee").isIdentifier({ name: "Decimal" })) {
     knownDecimalNodes.add(path.node);
   }
 };
-
 
 export default function (babel) {
   const { types: t } = babel;
@@ -66,12 +59,14 @@ export default function (babel) {
   return {
     name: "plugin-decimal-128",
     manipulateOptions(opts, parserOpts) {
-     parserOpts.plugins.push("decimal");
+      parserOpts.plugins.push("decimal");
     },
     visitor: {
-      BinaryExpression: { exit: replaceWithDecimalExpression(t, knownDecimalNodes) },
+      BinaryExpression: {
+        exit: replaceWithDecimalExpression(t, knownDecimalNodes),
+      },
       CallExpression: addToDecimalNodes(t, knownDecimalNodes),
       DecimalLiteral: replaceWithDecimal(t),
-    }
-  }
+    },
+  };
 }
