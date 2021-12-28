@@ -13,11 +13,14 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 
   const { left, right, operator } = path.node;
 
-  if (!knownDecimalNodes.has(left) && !knownDecimalNodes.has(right)) {
+  const leftIsDecimal = knownDecimalNodes.has(left);
+  const rightIsDecimal = knownDecimalNodes.has(right);
+
+  if (!leftIsDecimal && !rightIsDecimal) {
     return;
   }
 
-  if (knownDecimalNodes.has(left) !== knownDecimalNodes.has(right)) {
+  if (leftIsDecimal !== rightIsDecimal) {
     throw path.buildCodeFrameError(new SyntaxError('Mixed numeric types are not allowed.'));
   }
 
@@ -38,6 +41,7 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   knownDecimalNodes.add(newNode);
 
   path.replaceWith(newNode);
+  path.skip();
 };
 
 const replaceWithDecimal = (t) => (path) => {
@@ -45,17 +49,13 @@ const replaceWithDecimal = (t) => (path) => {
   const num = t.stringLiteral(path.node.value);
   const callee = t.identifier('Decimal');
 
-  const newPath = path.replaceWith(
+  path.replaceWith(
     t.callExpression(callee, [num])
   );
-
 };
 
 const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
-
-  if (!knownDecimalNodes.has(path.node) && path.get('callee').isIdentifier({name: 'Decimal'})) {
-    knownDecimalNodes.add(path.node);
-  }
+  knownDecimalNodes.add(path.node);
 };
 
 export default function (babel) {
