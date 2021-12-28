@@ -9,38 +9,15 @@ const opToName = {
 
 const includedOps = new Map(Object.entries(opToName));
 
-const isDecimalOrBinaryExpBare = (t) => (path) => {
-  return isDecimal(path) || t.isBinaryExpression(path);
-};
-
-const areMixedTypesBare = (isDecimalOrBinaryExp) => (a, b) => {
-
-  return (isDecimalOrBinaryExp(a) && !isDecimalOrBinaryExp(b))
-    || !(isDecimalOrBinaryExp(a) && isDecimalOrBinaryExp(b))
-};
-
-const isDecimal = (path) => {
-
-  /* There is a better way to do this, but optional chaining is not working with ASTExplorer just now. */
-
-  if (!path.isCallExpression() && !path.type === DECIMAL_LITERAL) {
-    return false;
-  }
-
-  return path.type === DECIMAL_LITERAL || path.get('callee').isIdentifier({name: 'Decimal'});
-};
-
-const replaceWithDecimalExpression = (t) => (path) => {
-  const isDecimalOrBinaryExp = isDecimalOrBinaryExpBare(t);
-  const areMixedTypes = areMixedTypesBare(isDecimalOrBinaryExp);
+const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 
   const { left, right, operator } = path.node;
 
-  if (!isDecimalOrBinaryExp(path.get('left')) && !(isDecimalOrBinaryExp(path.get('right')))) {
+  if (!knownDecimalNodes.has(left) && !knownDecimalNodes.has(right)) {
     return;
   }
 
-  if (areMixedTypes(path.get('left'), path.get('right'))) {
+  if (knownDecimalNodes.has(left) !== knownDecimalNodes.has(right)) {
     throw path.buildCodeFrameError(new SyntaxError('Mixed numeric types are not allowed.'));
   }
 
@@ -53,24 +30,37 @@ const replaceWithDecimalExpression = (t) => (path) => {
     t.identifier(opToName[operator])
   );
 
-  path.replaceWith(
-    t.callExpression(
-      member,
-      [right]
-    )
+  const newNode = t.callExpression(
+    member,
+    [right]
   );
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
 };
 
 const replaceWithDecimal = (t) => (path) => {
+
   const num = t.stringLiteral(path.node.value);
   const callee = t.identifier('Decimal');
-  path.replaceWith(
+
+  const newPath = path.replaceWith(
     t.callExpression(callee, [num])
   );
+
+};
+
+const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
+
+  if (!knownDecimalNodes.has(path.node) && path.get('callee').isIdentifier({name: 'Decimal'})) {
+    knownDecimalNodes.add(path.node);
+  }
 };
 
 export default function (babel) {
   const { types: t } = babel;
+  const knownDecimalNodes = new WeakSet();
 
   return {
     name: "decimal-transform",
@@ -78,7 +68,8 @@ export default function (babel) {
      parserOpts.plugins.push("decimal");
     },
     visitor: {
-      BinaryExpression: replaceWithDecimalExpression(t),
+      BinaryExpression: { exit: replaceWithDecimalExpression(t, knownDecimalNodes) },
+      CallExpression: addToDecimalNodes(t, knownDecimalNodes),
       DecimalLiteral: replaceWithDecimal(t),
     }
   }
