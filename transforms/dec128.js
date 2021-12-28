@@ -1,5 +1,3 @@
-const DECIMAL_LITERAL = "DecimalLiteral";
-
 const opToName = {
   '+': 'add',
   '*': 'mul',
