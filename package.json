@@ -1,0 +1,28 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "jest"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*.[jt]s?(x)"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.16.5",
+    "babel-plugin-tester": "^10.1.0",
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "jest": "^27.4.5",
+    "prettier": "2.5.1"
+  }
+}
