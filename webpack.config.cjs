@@ -11,7 +11,6 @@ module.exports = {
       {
         test: /\.[j]sx?$/,
         loader: "babel-loader",
-        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
@@ -30,7 +29,7 @@ module.exports = {
     port: 4444,
     static: "./",
   },
-  devtool: "eval-source-map",
+  devtool: "eval",
   plugins: [new MonacoWebpackPlugin({
     languages: ['javascript', 'typescript']
   })],
