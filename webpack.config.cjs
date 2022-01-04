@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.js",
@@ -30,7 +30,9 @@ module.exports = {
     static: "./",
   },
   devtool: "eval",
-  plugins: [new MonacoWebpackPlugin({
-    languages: ['javascript', 'typescript']
-  })],
+  plugins: [
+    new MonacoWebpackPlugin({
+      languages: ["javascript", "typescript"],
+    }),
+  ],
 };
