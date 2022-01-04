@@ -1,8 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
-import { Editor } from "./editor.js";
-import { Output } from "./output.js";
 import { monaco } from "react-monaco-editor";
+import { App } from "./app.js";
 import { DEFAULT_TEXT } from "./constants.js";
 
 const hash = window.location.hash;
@@ -30,12 +29,7 @@ monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 const editorModel = monaco.editor.createModel(content, "javascript");
 const outputModel = monaco.editor.createModel(DEFAULT_TEXT, "javascript");
 
-const App = () => (
-  <div>
-    <h1>🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵</h1>
-    <Editor model={editorModel} />
-    <Output model={outputModel} />
-  </div>
+render(
+  <App editorModel={editorModel} outputModel={outputModel} />,
+  document.getElementById("playground")
 );
-
-render(<App />, document.getElementById("playground"));

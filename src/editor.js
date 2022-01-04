@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
 import { EDITOR_OPTIONS } from "./constants.js";
 
-const Editor = ({ model }) => {
+const Editor = ({ model, updateOutput = () => {} } = {}) => {
   const [value, updateValue] = useState(model.getValue());
 
   const updateHash = () => {
@@ -26,6 +26,7 @@ const Editor = ({ model }) => {
   const onChange = (newValue) => {
     updateValue(newValue);
     console.log("Changed!", newValue);
+    updateOutput(newValue);
   };
 
   return (

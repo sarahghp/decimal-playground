@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.js",
@@ -19,7 +20,11 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".js"],
+    extensions: [".js", ".json"],
+    fallback: {
+      fs: false,
+      path: require.resolve("path-browserify"),
+    },
   },
   output: {
     filename: "bundle.js",
@@ -31,6 +36,7 @@ module.exports = {
   },
   devtool: "eval",
   plugins: [
+    new NodePolyfillPlugin(),
     new MonacoWebpackPlugin({
       languages: ["javascript", "typescript"],
     }),
