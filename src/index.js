@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { Editor } from "./editor.js";
 import { Output } from "./output.js";
 import { monaco } from "react-monaco-editor";
-import { DEFAULT_TEXT } from "./texts.js";
+import { DEFAULT_TEXT } from "./constants.js";
 
 const hash = window.location.hash;
 console.log(`loading from hash ${hash}`);

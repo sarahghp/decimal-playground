@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
+import { EDITOR_OPTIONS } from "./constants.js";
 
 const editorOptions = {
-  fontSize: 18,
-  theme: "vs-dark",
-  automaticLayout: true,
-  codeLens: false,
-  minimap: {
-    enabled: false,
-  },
+  ...EDITOR_OPTIONS,
+  readOnly: true,
 };
 
 const Output = ({ model }) => {

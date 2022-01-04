@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
-
-const editorOptions = {
-  fontSize: 18,
-  theme: "vs-dark",
-  automaticLayout: true,
-  codeLens: false,
-  minimap: {
-    enabled: false,
-  },
-};
+import { EDITOR_OPTIONS } from "./constants.js";
 
 const Editor = ({ model }) => {
   const [value, updateValue] = useState(model.getValue());
@@ -40,7 +31,7 @@ const Editor = ({ model }) => {
   return (
     <div className="editorWrapper">
       <MonacoEditor
-        options={{ ...editorOptions }}
+        options={EDITOR_OPTIONS}
         editorDidMount={onEditorMounted}
         onChange={onChange}
         laguage="javascript"
