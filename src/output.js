@@ -7,7 +7,7 @@ const editorOptions = {
   readOnly: true,
 };
 
-const Output = ({ model }) => {
+const Output = ({ content }) => {
   const onEditorMounted = (editor) => {
     console.log("Output mounted");
   };
@@ -15,9 +15,10 @@ const Output = ({ model }) => {
   return (
     <div className="editorWrapper">
       <MonacoEditor
-        options={{ ...editorOptions, model }}
+        options={editorOptions}
         editorDidMount={onEditorMounted}
         language="javascript"
+        value={content}
       />
     </div>
   );

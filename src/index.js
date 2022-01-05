@@ -1,3 +1,4 @@
+import "regenerator-runtime/runtime.js";
 import React from "react";
 import { render } from "react-dom";
 import { monaco } from "react-monaco-editor";
@@ -27,9 +28,9 @@ monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 });
 
 const editorModel = monaco.editor.createModel(content, "javascript");
-const outputModel = monaco.editor.createModel(DEFAULT_TEXT, "javascript");
+// const outputModel = monaco.editor.createModel(DEFAULT_TEXT, "javascript");
 
 render(
-  <App editorModel={editorModel} outputModel={outputModel} />,
+  <App editorModel={editorModel} output={content} />,
   document.getElementById("playground")
 );
