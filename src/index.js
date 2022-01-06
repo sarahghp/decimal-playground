@@ -28,7 +28,6 @@ monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 });
 
 const editorModel = monaco.editor.createModel(content, "javascript");
-// const outputModel = monaco.editor.createModel(DEFAULT_TEXT, "javascript");
 
 render(
   <App editorModel={editorModel} output={content} />,

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { transformAsync } from "@babel/core";
+import { transformAsync, transformSync } from "@babel/core";
 import PresetEnv from "@babel/preset-env";
 import PresetReact from "@babel/preset-react";
 import Dec128 from "../transforms/dec128.js";
 import { Editor } from "./editor.js";
+import { Results } from "./results.js";
 import { Output } from "./output.js";
 
 const babelOptions = {
@@ -43,8 +44,13 @@ const App = ({ editorModel, output }) => {
   return (
     <div>
       <h1>🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵</h1>
-      <Editor model={editorModel} updateOutput={updateOutput} />
-      <Output content={transformedOutput} />
+      <div className="row">
+        <Editor model={editorModel} updateOutput={updateOutput} />
+        <Output content={transformedOutput} />
+      </div>
+      <div className="row">
+        <Results content={transformedOutput} />
+      </div>
     </div>
   );
 };

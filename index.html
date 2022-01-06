@@ -6,9 +6,25 @@
     <script src="./dist/bundle.js" charset="utf-8" type="module"></script>
     <title>Decimal Proposal Playground</title>
     <style>
-      .editorWrapper {
+      .domPlayground {
+        background-color: white;
+      }
+
+      .domPlayground iframe {
+        display: block;
         width: 100%;
-        height: 80vh;
+        height: 100%;
+        border: none;
+      }
+
+      .editorWrapper {
+        flex: 1;
+      }
+
+      .row {
+        display: flex;
+        height: 60vh;
+        width: 100vw;
       }
     </style>
   </head>
