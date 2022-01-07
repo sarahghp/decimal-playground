@@ -6,12 +6,39 @@
     <script src="./dist/bundle.js" charset="utf-8" type="module"></script>
     <title>Decimal Proposal Playground</title>
     <style>
+      html {
+        font-family: monospace;
+      }
+
+      body {
+        background-color: rgb(30, 30, 30);
+        color: LavenderBlush;
+      }
+
+      .console {
+        background-color: rgb(30, 30, 30);
+        border-top: 2px solid #303030;
+        overflow-y: scroll;
+        flex: 1;
+      }
+
+      .console li {
+        background-color: rgb(30, 30, 30) !important;
+        font-size: 18px !important;
+        line-height: 2 !important;
+        padding-left: 1.5rem;
+      }
+
+      .console li span {
+        color: salmon !important;
+      }
+
       .domPlayground {
         background-color: white;
+        flex: 1;
       }
 
       .domPlayground iframe {
-        display: block;
         width: 100%;
         height: 100%;
         border: none;
@@ -24,7 +51,13 @@
       .row {
         display: flex;
         height: 60vh;
+        width: 100%;
+      }
+
+      .titleRow {
+        display: flex;
         width: 100vw;
+        justify-content: space-around;
       }
     </style>
   </head>

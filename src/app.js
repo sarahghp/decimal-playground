@@ -43,7 +43,10 @@ const App = ({ editorModel, output }) => {
 
   return (
     <div>
-      <h1>🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵☃️🌵</h1>
+      <div className="titleRow">
+        <h1>🌵☃️ DECIMAL PLAYGROUND ☃️🌵</h1>
+        <h1>🚧 Under Construction 🚧</h1>
+      </div>
       <div className="row">
         <Editor model={editorModel} updateOutput={updateOutput} />
         <Output content={transformedOutput} />
