@@ -8,6 +8,7 @@ const EDITOR_OPTIONS = {
   minimap: {
     enabled: false,
   },
+  wordWrap: true,
 };
 
 export { DEFAULT_TEXT, EDITOR_OPTIONS };

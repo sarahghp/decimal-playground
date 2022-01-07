@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useReducer } from "react";
 import MonacoEditor from "react-monaco-editor";
-import { ObjectInspector } from "react-inspector";
+import { Console } from "./console.js";
 import { EDITOR_OPTIONS } from "./constants.js";
 
 const editorOptions = {
@@ -24,7 +24,7 @@ const logsReducer = (state, action) => {
   }
 };
 
-const Results = ({ content }) => {
+const Results = ({ content, error }) => {
   const [logsList, updateLogs] = useReducer(logsReducer, emptyLogsList);
   const [iframe, updateIframe] = useState();
   const iframeContainerRef = useRef();
@@ -60,15 +60,7 @@ const Results = ({ content }) => {
 
   return (
     <>
-      <div className="console">
-        {logsList.map((log, idx) => (
-          <ObjectInspector
-            key={idx}
-            theme="chromeDark"
-            data={log.data.length === 1 ? log.data[0] : log.data}
-          />
-        ))}
-      </div>
+      <Console logsList={logsList} error={error} />
       <div className="domPlayground" ref={iframeContainerRef}></div>
     </>
   );
