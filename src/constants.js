@@ -11,4 +11,16 @@ const EDITOR_OPTIONS = {
   wordWrap: true,
 };
 
-export { DEFAULT_TEXT, EDITOR_OPTIONS };
+const CONSOLE = "console";
+const DOM_PLAYGROUND = "dom_playground";
+const EDITOR = "editor";
+const OUTPUT = "output";
+
+export {
+  DEFAULT_TEXT,
+  EDITOR_OPTIONS,
+  CONSOLE,
+  DOM_PLAYGROUND,
+  EDITOR,
+  OUTPUT,
+};

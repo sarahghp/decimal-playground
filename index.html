@@ -20,12 +20,13 @@
         border-top: 2px solid #303030;
         overflow-y: scroll;
         flex: 1;
+        min-width: 400px;
       }
 
       .console li {
         background-color: rgb(30, 30, 30) !important;
         font-size: 18px !important;
-        line-height: 2 !important;
+        margin-top: 1rem;
         padding-left: 1.5rem;
       }
 
@@ -36,6 +37,7 @@
       .domPlayground {
         background-color: white;
         flex: 1;
+        min-width: 400px;
       }
 
       .domPlayground iframe {
@@ -46,11 +48,29 @@
 
       .editorWrapper {
         flex: 1;
+        min-width: 400px;
+      }
+
+      .order-1 {
+        order: 1;
+      }
+
+      .order-2 {
+        order: 2;
+      }
+
+      .order-3 {
+        order: 3;
+      }
+
+      .order-4 {
+        order: 4;
       }
 
       .row {
         display: flex;
-        height: 60vh;
+        flex-wrap: wrap;
+        min-height: 60vh;
         width: 100%;
       }
 
@@ -58,6 +78,10 @@
         display: flex;
         width: 100vw;
         justify-content: space-around;
+      }
+
+      #playground {
+        height: 100vh;
       }
     </style>
   </head>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MonacoEditor from "react-monaco-editor";
 import { EDITOR_OPTIONS } from "./constants.js";
 
-const Editor = ({ model, updateOutput = () => {} } = {}) => {
+const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
   const [value, updateValue] = useState(model.getValue());
 
   const updateHash = () => {
@@ -30,7 +30,7 @@ const Editor = ({ model, updateOutput = () => {} } = {}) => {
   };
 
   return (
-    <div className="editorWrapper">
+    <div className={`editorWrapper ${orderClass}`}>
       <MonacoEditor
         options={EDITOR_OPTIONS}
         editorDidMount={onEditorMounted}

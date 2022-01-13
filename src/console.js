@@ -10,9 +10,9 @@ const editorOptions = {
   wordWrap: "on",
 };
 
-const Console = ({ logsList, error }) => {
+const Console = ({ logsList, error, orderClass }) => {
   return error ? (
-    <div className="editorWrapper">
+    <div className={`editorWrapper ${orderClass}`}>
       <MonacoEditor
         options={editorOptions}
         language="javascript"
@@ -20,7 +20,7 @@ const Console = ({ logsList, error }) => {
       />
     </div>
   ) : (
-    <div className="console">
+    <div className={`console ${orderClass}`}>
       {logsList.map((log, idx) => (
         <ObjectInspector
           key={idx}
