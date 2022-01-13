@@ -9,16 +9,16 @@ const hash = window.location.hash;
 console.log(`loading from hash ${hash}`);
 
 let content;
+let data;
 
 try {
   if (hash) {
     const json = atob(hash.slice(1));
-    const data = JSON.parse(json);
-
-    content = data.content || DEFAULT_TEXT;
-
-    console.log(`loading content: ${content}`);
+    data = JSON.parse(json);
   }
+
+  content = data?.content || DEFAULT_TEXT;
+  console.log(`loading content: ${content}`);
 } catch (err) {
   console.error(err);
 }
