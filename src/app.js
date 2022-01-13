@@ -3,7 +3,15 @@ import { transformAsync, transformSync } from "@babel/core";
 import PresetEnv from "@babel/preset-env";
 import PresetReact from "@babel/preset-react";
 import Dec128 from "../transforms/dec128.js";
-import { CONSOLE, DOM_PLAYGROUND, EDITOR, OUTPUT } from "./constants.js";
+import {
+  CONSOLE,
+  DOM_PLAYGROUND,
+  EDITOR,
+  OUTPUT,
+  THREE_UP,
+  CHECKERBOARD,
+} from "./constants.js";
+import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
 import { Results } from "./results.js";
 import { Output } from "./output.js";
@@ -48,23 +56,51 @@ const App = ({ editorModel, output }) => {
   };
 
   /* Component ordering state and functions  */
+  const [viewType, updateViewType] = useState(THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState([
     EDITOR,
-    OUTPUT,
     CONSOLE,
     DOM_PLAYGROUND,
   ]);
 
   const orderClass = (item) => {
     const n = visibleComponents.findIndex((el) => el === item);
-    return n > -1 ? `order-${n}` : null;
+
+    return n > -1 ? `order-${n} ${layoutClass}` : "collapse";
   };
+
+  const layoutClass =
+    viewType === THREE_UP ? "columnsView" : "checkerboardView";
+
+  const toggleView = (item) => {
+    const itemPosition = visibleComponents.findIndex((el) => el === item);
+
+    if (itemPosition < 0) {
+      updateVisisbleComponents([...visibleComponents, item]);
+      return;
+    }
+
+    updateVisisbleComponents([
+      ...visibleComponents.slice(0, itemPosition),
+      ...visibleComponents.slice(itemPosition + 1),
+    ]);
+  };
+
+  const toggleViewType = (type) => updateViewType(type);
 
   return (
     <>
       <div className="titleRow">
-        <h1>🌵☃️ DECIMAL PLAYGROUND ☃️🌵</h1>
-        <h1>🚧 Under Construction 🚧</h1>
+        <div>
+          <h1>Decimal Playground</h1>
+          <h2>🚧 Under Construction 🚧</h2>
+        </div>
+
+        <Controls
+          toggleView={toggleView}
+          toggleViewType={toggleViewType}
+          visibleComponents={visibleComponents}
+        />
       </div>
       <div className="row">
         <Editor

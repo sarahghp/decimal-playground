@@ -37,6 +37,8 @@ const CONSOLE = "console";
 const DOM_PLAYGROUND = "dom_playground";
 const EDITOR = "editor";
 const OUTPUT = "output";
+const THREE_UP = "columns";
+const CHECKERBOARD = "checkerboard";
 
 export {
   DEFAULT_TEXT,
@@ -45,4 +47,6 @@ export {
   DOM_PLAYGROUND,
   EDITOR,
   OUTPUT,
+  THREE_UP,
+  CHECKERBOARD,
 };

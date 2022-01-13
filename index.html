@@ -15,12 +15,33 @@
         color: LavenderBlush;
       }
 
+      button {
+        padding: 1rem;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+
+      button.on {
+        background-color: salmon;
+        color: white;
+        border: salmon solid 1px;
+      }
+
+      button.off {
+        background-color: rgba(0, 0, 0, 0);
+        color: salmon;
+        border: salmon dashed 1px;
+      }
+
+      .collapse {
+        display: none;
+      }
+
       .console {
         background-color: rgb(30, 30, 30);
-        border-top: 2px solid #303030;
         overflow-y: scroll;
         flex: 1;
-        min-width: 400px;
+        margin-bottom: 1vh;
       }
 
       .console li {
@@ -33,7 +54,7 @@
       .domPlayground {
         background-color: white;
         flex: 1;
-        min-width: 400px;
+        margin-bottom: 1vh;
       }
 
       .domPlayground iframe {
@@ -44,7 +65,8 @@
 
       .editorWrapper {
         flex: 1;
-        min-width: 400px;
+        margin-bottom: 1vh;
+        padding-top: 0.5rem;
       }
 
       .order-1 {
@@ -67,17 +89,28 @@
         display: flex;
         flex-wrap: wrap;
         min-height: 60vh;
-        width: 100%;
+        width: 100vw;
+        justify-content: space-between;
+        align-items: stretch;
       }
 
       .titleRow {
         display: flex;
         width: 100vw;
-        justify-content: space-around;
+        justify-content: space-evenly;
+        align-items: center;
+        border-bottom: 1px #53535c solid;
       }
 
-      #playground {
-        height: 100vh;
+      .columnsView {
+        min-width: 400px;
+        min-height: 70vh;
+      }
+
+      .checkerboardView {
+        width: 48vw;
+        min-width: 48vw;
+        height: 45vh;
       }
     </style>
   </head>
