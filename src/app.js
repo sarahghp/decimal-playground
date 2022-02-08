@@ -3,6 +3,8 @@ import { transformAsync, transformSync } from "@babel/core";
 import PresetEnv from "@babel/preset-env";
 import PresetReact from "@babel/preset-react";
 import Dec128 from "../transforms/dec128.js";
+import BigDec from "../transforms/bigdec.js";
+
 import {
   CONSOLE,
   DOM_PLAYGROUND,
@@ -10,36 +12,44 @@ import {
   OUTPUT,
   THREE_UP,
   CHECKERBOARD,
+  BIG_DECIMAL,
+  DECIMAL_128,
 } from "./constants.js";
+
 import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
 import { Results } from "./results.js";
 import { Output } from "./output.js";
 
-const babelOptions = {
-  presets: [[PresetEnv, { modules: false }], [PresetReact]],
-  plugins: [[Dec128]],
+const implementations = {
+  [BIG_DECIMAL]: BigDec,
+  [DECIMAL_128]: Dec128,
 };
 
-const useTransformedOutput = (code) => {
+const babelOptions = {
+  presets: [[PresetEnv, { modules: false }], [PresetReact]],
+};
+
+const useTransformedOutput = (code, decimalImpl) => {
   const [transformed, setTransformed] = useState("");
   const [transformationError, setTransformationError] = useState(null);
 
   useEffect(() => {
     const transformOutput = async () => {
       try {
-        const result = await transformAsync(code, babelOptions);
-        console.log("✨", result.code);
+        const result = await transformAsync(code, {
+          ...babelOptions,
+          plugins: [[implementations[decimalImpl]]],
+        });
         setTransformed(result.code);
         setTransformationError(null);
       } catch (err) {
-        console.warn("😭", err.message);
         setTransformationError(err);
       }
     };
 
     transformOutput();
-  }, [code]);
+  }, [code, decimalImpl]);
 
   return [transformed, transformationError];
 };
@@ -47,11 +57,13 @@ const useTransformedOutput = (code) => {
 const App = ({ editorModel, output }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
-  const [transformedOutput, transformationError] =
-    useTransformedOutput(rawInput);
+  const [decimalImpl, updateDecimalImpl] = useState(DECIMAL_128);
+  const [transformedOutput, transformationError] = useTransformedOutput(
+    rawInput,
+    decimalImpl
+  );
 
   const updateOutput = (newValue) => {
-    console.log("🌵");
     updateRawInput(newValue);
   };
 
@@ -87,16 +99,17 @@ const App = ({ editorModel, output }) => {
   };
 
   const toggleViewType = (type) => updateViewType(type);
+  const toggleDecimalImpl = (type) => updateDecimalImpl(type);
 
   return (
     <>
       <div className="titleRow">
         <div>
           <h1>Decimal Playground</h1>
-          <h2>🚧 Under Construction 🚧</h2>
         </div>
 
         <Controls
+          toggleDecimalImpl={toggleDecimalImpl}
           toggleView={toggleView}
           toggleViewType={toggleViewType}
           visibleComponents={visibleComponents}

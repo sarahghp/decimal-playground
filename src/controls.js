@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   CONSOLE,
   DOM_PLAYGROUND,
@@ -6,64 +6,69 @@ import {
   OUTPUT,
   THREE_UP,
   CHECKERBOARD,
+  BIG_DECIMAL,
+  DECIMAL_128,
 } from "./constants.js";
 
-const Controls = ({ toggleView, toggleViewType, visibleComponents }) => {
+const panes = [EDITOR, OUTPUT, CONSOLE, DOM_PLAYGROUND];
+
+const Controls = ({
+  toggleDecimalImpl,
+  toggleView,
+  toggleViewType,
+  visibleComponents,
+}) => {
+  const [viewType, updateViewType] = useState(THREE_UP);
+  const [decimalType, updateDecimalType] = useState(DECIMAL_128);
+
   const buttonClass = (item) =>
-    visibleComponents.includes(item) ? "on" : "off";
+    visibleComponents.includes(item) ? "on titleItem" : "off titleItem";
+
+  const changeViewType = (event) => {
+    const val = event.target.value;
+    updateViewType(val);
+    toggleViewType(val);
+  };
+
+  const changeDecimalType = (event) => {
+    const val = event.target.value;
+    updateDecimalType(val);
+    toggleDecimalImpl(val);
+  };
 
   return (
     <>
-      <button
-        className={buttonClass(EDITOR)}
-        onClick={toggleView.bind(null, EDITOR)}
-      >
-        Toggle Editor
-      </button>
-      <button
-        className={buttonClass(OUTPUT)}
-        onClick={toggleView.bind(null, OUTPUT)}
-      >
-        Toggle Output
-      </button>
-      <button
-        className={buttonClass(CONSOLE)}
-        onClick={toggleView.bind(null, CONSOLE)}
-      >
-        Toggle Console
-      </button>
-      <button
-        className={buttonClass(DOM_PLAYGROUND)}
-        onClick={toggleView.bind(null, DOM_PLAYGROUND)}
-      >
-        Toggle DOM
-      </button>
+      {panes.map((pane) => (
+        <button
+          className={buttonClass(pane)}
+          onClick={toggleView.bind(null, pane)}
+        >
+          {`Toggle ${pane}`}
+        </button>
+      ))}
 
-      <div>
-        <span>Layout type</span>
-        <hr />
-        <div>
-          <input
-            type="radio"
-            id={THREE_UP}
-            name="viewType"
-            value={THREE_UP}
-            onClick={toggleViewType.bind(null, THREE_UP)}
-            defaultChecked
-          />
-          <label htmlFor={THREE_UP}>{THREE_UP}</label>
-        </div>
+      <div className="titleItem">
+        <p>
+          <label htmlFor="select-layout">Layout type</label>
+        </p>
+        <select id="select-layout" value={viewType} onChange={changeViewType}>
+          <option value={THREE_UP}>{THREE_UP}</option>
+          <option value={CHECKERBOARD}>{CHECKERBOARD}</option>
+        </select>
+      </div>
 
-        <div>
-          <input
-            type="radio"
-            id={CHECKERBOARD}
-            name="viewType"
-            value={CHECKERBOARD}
-            onClick={toggleViewType.bind(null, CHECKERBOARD)}
-          />
-          <label htmlFor={CHECKERBOARD}>{CHECKERBOARD}</label>
-        </div>
+      <div className="titleItem">
+        <p>
+          <label htmlFor="select-dec-type">Decimal impl.</label>
+        </p>
+        <select
+          id="select-dec-type"
+          value={decimalType}
+          onChange={changeDecimalType}
+        >
+          <option value={BIG_DECIMAL}>{BIG_DECIMAL}</option>
+          <option value={DECIMAL_128}>{DECIMAL_128}</option>
+        </select>
       </div>
     </>
   );

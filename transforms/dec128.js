@@ -2,7 +2,6 @@ const opToName = {
   "+": "add",
   "*": "mul",
   "-": "sub",
-  "/": "div",
 };
 
 const includedOps = new Map(Object.entries(opToName));

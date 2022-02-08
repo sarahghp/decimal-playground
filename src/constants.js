@@ -33,12 +33,14 @@ const EDITOR_OPTIONS = {
   wordWrap: true,
 };
 
-const CONSOLE = "console";
-const DOM_PLAYGROUND = "dom_playground";
-const EDITOR = "editor";
-const OUTPUT = "output";
+const CONSOLE = "Console";
+const DOM_PLAYGROUND = "DOM";
+const EDITOR = "Editor";
+const OUTPUT = "Output";
 const THREE_UP = "columns";
 const CHECKERBOARD = "checkerboard";
+const BIG_DECIMAL = "big decimal";
+const DECIMAL_128 = "decimal 128";
 
 export {
   DEFAULT_TEXT,
@@ -49,4 +51,6 @@ export {
   OUTPUT,
   THREE_UP,
   CHECKERBOARD,
+  BIG_DECIMAL,
+  DECIMAL_128,
 };
