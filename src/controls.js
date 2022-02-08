@@ -40,6 +40,7 @@ const Controls = ({
     <>
       {panes.map((pane) => (
         <button
+          key={pane}
           className={buttonClass(pane)}
           onClick={toggleView.bind(null, pane)}
         >

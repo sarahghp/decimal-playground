@@ -13,15 +13,10 @@ const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
     const json = JSON.stringify(data);
     const hash = btoa(json);
 
-    console.log(`updating hash with new state: ${hash}`);
     window.location.hash = hash;
   };
 
   useEffect(updateHash, [value]);
-
-  const onEditorMounted = (editor) => {
-    console.log("Editor mounted");
-  };
 
   const onChange = (newValue) => {
     updateValue(newValue);
@@ -33,7 +28,6 @@ const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
     <div className={`editorWrapper ${orderClass}`}>
       <MonacoEditor
         options={EDITOR_OPTIONS}
-        editorDidMount={onEditorMounted}
         onChange={onChange}
         laguage="javascript"
         value={value}

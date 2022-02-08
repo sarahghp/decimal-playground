@@ -18,7 +18,6 @@ try {
   }
 
   content = data?.content || DEFAULT_TEXT;
-  console.log(`loading content: ${content}`);
 } catch (err) {
   console.error(err);
 }
