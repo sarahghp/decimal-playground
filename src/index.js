@@ -8,8 +8,9 @@ import { DEFAULT_TEXT } from "./constants.js";
 const hash = window.location.hash;
 console.log(`loading from hash ${hash}`);
 
-let content;
 let data;
+let code;
+let configOpts;
 
 try {
   if (hash) {
@@ -17,7 +18,11 @@ try {
     data = JSON.parse(json);
   }
 
-  content = data?.content || DEFAULT_TEXT;
+  const { content, visibleComponents, decimalImpl, viewType } = data;
+  code = content || DEFAULT_TEXT;
+  configOpts = { visibleComponents, decimalImpl, viewType };
+
+  console.log(configOpts);
 } catch (err) {
   console.error(err);
 }
@@ -26,9 +31,9 @@ monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
   diagnosticCodesToIgnore: [1351, 7027],
 });
 
-const editorModel = monaco.editor.createModel(content, "javascript");
+const editorModel = monaco.editor.createModel(code, "javascript");
 
 render(
-  <App editorModel={editorModel} output={content} />,
+  <App editorModel={editorModel} configOpts={configOpts} output={code} />,
   document.getElementById("playground")
 );

@@ -54,10 +54,26 @@ const useTransformedOutput = (code, decimalImpl) => {
   return [transformed, transformationError];
 };
 
-const App = ({ editorModel, output }) => {
+const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
+  const data = {
+    content: rawInput,
+    visibleComponents,
+    decimalImpl,
+    viewType,
+  };
+
+  const json = JSON.stringify(data);
+  const hash = btoa(json);
+
+  window.location.hash = hash;
+};
+
+const App = ({ editorModel, output, configOpts }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
-  const [decimalImpl, updateDecimalImpl] = useState(DECIMAL_128);
+  const [decimalImpl, updateDecimalImpl] = useState(
+    configOpts.decimalImpl || DECIMAL_128
+  );
   const [transformedOutput, transformationError] = useTransformedOutput(
     rawInput,
     decimalImpl
@@ -68,12 +84,10 @@ const App = ({ editorModel, output }) => {
   };
 
   /* Component ordering state and functions  */
-  const [viewType, updateViewType] = useState(THREE_UP);
-  const [visibleComponents, updateVisisbleComponents] = useState([
-    EDITOR,
-    CONSOLE,
-    DOM_PLAYGROUND,
-  ]);
+  const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
+  const [visibleComponents, updateVisisbleComponents] = useState(
+    configOpts.visibleComponents || [EDITOR, CONSOLE, DOM_PLAYGROUND]
+  );
 
   const orderClass = (item) => {
     const n = visibleComponents.findIndex((el) => el === item);
@@ -84,7 +98,7 @@ const App = ({ editorModel, output }) => {
   const layoutClass =
     viewType === THREE_UP ? "columnsView" : "checkerboardView";
 
-  const toggleView = (item) => {
+  const toggleComponents = (item) => {
     const itemPosition = visibleComponents.findIndex((el) => el === item);
 
     if (itemPosition < 0) {
@@ -101,6 +115,11 @@ const App = ({ editorModel, output }) => {
   const toggleViewType = (type) => updateViewType(type);
   const toggleDecimalImpl = (type) => updateDecimalImpl(type);
 
+  useEffect(
+    () => updateHash(rawInput, visibleComponents, decimalImpl, viewType),
+    [rawInput, visibleComponents, decimalImpl, viewType]
+  );
+
   return (
     <>
       <div className="titleRow">
@@ -109,10 +128,12 @@ const App = ({ editorModel, output }) => {
         </div>
 
         <Controls
+          decimalImpl={decimalImpl}
           toggleDecimalImpl={toggleDecimalImpl}
-          toggleView={toggleView}
+          viewType={viewType}
           toggleViewType={toggleViewType}
           visibleComponents={visibleComponents}
+          toggleComponents={toggleComponents}
         />
       </div>
       <div className="row">

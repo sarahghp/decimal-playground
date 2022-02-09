@@ -13,26 +13,23 @@ import {
 const panes = [EDITOR, OUTPUT, CONSOLE, DOM_PLAYGROUND];
 
 const Controls = ({
+  decimalImpl,
   toggleDecimalImpl,
-  toggleView,
+  viewType,
   toggleViewType,
   visibleComponents,
+  toggleComponents,
 }) => {
-  const [viewType, updateViewType] = useState(THREE_UP);
-  const [decimalType, updateDecimalType] = useState(DECIMAL_128);
-
   const buttonClass = (item) =>
     visibleComponents.includes(item) ? "on titleItem" : "off titleItem";
 
   const changeViewType = (event) => {
     const val = event.target.value;
-    updateViewType(val);
     toggleViewType(val);
   };
 
   const changeDecimalType = (event) => {
     const val = event.target.value;
-    updateDecimalType(val);
     toggleDecimalImpl(val);
   };
 
@@ -42,7 +39,7 @@ const Controls = ({
         <button
           key={pane}
           className={buttonClass(pane)}
-          onClick={toggleView.bind(null, pane)}
+          onClick={toggleComponents.bind(null, pane)}
         >
           {`Toggle ${pane}`}
         </button>
@@ -64,7 +61,7 @@ const Controls = ({
         </p>
         <select
           id="select-dec-type"
-          value={decimalType}
+          value={decimalImpl}
           onChange={changeDecimalType}
         >
           <option value={BIG_DECIMAL}>{BIG_DECIMAL}</option>
