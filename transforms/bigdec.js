@@ -1,11 +1,14 @@
+import {
+  earlyReturn,
+  passesGeneralChecks,
+  replaceWithDecimal,
+  sharedOpts,
+} from "./shared.js";
+
 const opToName = {
-  "+": "add",
-  "*": "mul",
-  "-": "sub",
+  ...sharedOpts,
   "/": "div",
 };
-
-const includedOps = new Map(Object.entries(opToName));
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   const { left, right, operator } = path.node;
@@ -13,21 +16,13 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   const leftIsDecimal = knownDecimalNodes.has(left);
   const rightIsDecimal = knownDecimalNodes.has(right);
 
-  if (!leftIsDecimal && !rightIsDecimal) {
+  if (earlyReturn([!leftIsDecimal && !rightIsDecimal])) {
     return;
   }
 
-  if (leftIsDecimal !== rightIsDecimal) {
-    throw path.buildCodeFrameError(
-      new SyntaxError("Mixed numeric types are not allowed.")
-    );
-  }
+  passesGeneralChecks(path, knownDecimalNodes, opToName);
 
-  if (!includedOps.has(operator)) {
-    throw path.buildCodeFrameError(
-      new SyntaxError(`${operator} is not currently supported.`)
-    );
-  }
+  /* Add function(s) for implementation-specific checks here */
 
   const member = t.memberExpression(left, t.identifier(opToName[operator]));
 
@@ -37,13 +32,6 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 
   path.replaceWith(newNode);
   path.skip();
-};
-
-const replaceWithDecimal = (t) => (path) => {
-  const num = t.stringLiteral(path.node.value);
-  const callee = t.identifier("Decimal");
-
-  path.replaceWith(t.callExpression(callee, [num]));
 };
 
 const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
