@@ -22,7 +22,6 @@ try {
   code = content || DEFAULT_TEXT;
   configOpts = { visibleComponents, decimalImpl, viewType };
 
-  console.log(configOpts);
 } catch (err) {
   console.error(err);
 }
