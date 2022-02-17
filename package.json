@@ -1,9 +1,14 @@
 {
+  "name": "Decimal Proposal Playground",
   "type": "module",
   "scripts": {
     "test": "jest"
   },
   "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
     "env": {
       "test": {
         "plugins": [
@@ -23,6 +28,27 @@
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "jest": "^27.4.5",
-    "prettier": "2.5.1"
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "path-browserify": "^1.0.1",
+    "prettier": "2.5.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "monaco-editor": "^0.31.1",
+    "monaco-editor-core": "^0.31.1",
+    "monaco-editor-webpack-plugin": "^7.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-inspector": "^5.1.1",
+    "react-monaco-editor": "^0.46.0",
+    "regenerator-runtime": "^0.13.9",
+    "style-loader": "^3.3.1",
+    "webpack-dev-server": "^4.7.2"
   }
 }
