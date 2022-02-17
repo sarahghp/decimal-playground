@@ -8,7 +8,7 @@ import { DEFAULT_TEXT } from "./constants.js";
 const hash = window.location.hash;
 console.log(`loading from hash ${hash}`);
 
-let data;
+let data = {};
 let code;
 let configOpts;
 
