@@ -2,6 +2,7 @@ import {
   earlyReturn,
   passesGeneralChecks,
   replaceWithDecimal,
+  replaceWithUnaryDecimalExpression,
   sharedOpts,
 } from "./shared.js";
 
@@ -52,6 +53,9 @@ export default function (babel) {
       },
       CallExpression: addToDecimalNodes(t, knownDecimalNodes),
       DecimalLiteral: replaceWithDecimal(t),
+      UnaryExpression: {
+        exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
+      },
     },
   };
 }

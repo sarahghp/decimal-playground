@@ -39,6 +39,10 @@ const operators = {
     code: "10.3m / 12.4m",
     output: 'Decimal("10.3").div(Decimal("12.4"));',
   },
+  "converts unary - to .neg()": {
+    code: "-10.3m + -12.4m",
+    output: 'Decimal("10.3").neg().add(Decimal("12.4").neg());',
+  },
 };
 
 const nestedOutput = `
@@ -72,6 +76,10 @@ const inBinaryExpressions = {
   "transforms long nested BinaryExpressions": {
     code: "21.3m * (0.4m + 11.3m) - (10m * (10000.m + 90m)) - 80m + 35.67m * 103429.642950m + 21.3m * (0.4m + 11.3m) - 10m * 10000.m + 90m - 80m + 35.67m * 103429.642950m ;",
     output: longNestedOutput,
+  },
+  "transforms negation of expression": {
+    code: "-(0.001m + 17.6m)",
+    output: 'Decimal("0.001").add(Decimal("17.6")).neg();',
   },
 };
 
