@@ -2,6 +2,8 @@
   "name": "Decimal Proposal Playground",
   "type": "module",
   "scripts": {
+    "build": "webpack build",
+    "dev": "webpack serve",
     "test": "jest"
   },
   "babel": {
