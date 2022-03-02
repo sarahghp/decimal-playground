@@ -8,7 +8,10 @@ import {
 
 const implementationIdentifier = "Decimal";
 
-const opToName = sharedOpts;
+const opToName = {
+  ...sharedOpts,
+  "/": "div",
+};
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   const { left, right, operator } = path.node;
