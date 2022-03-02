@@ -33,6 +33,9 @@ module.exports = {
   devServer: {
     port: 4444,
     static: "./",
+    devMiddleware: {
+      writeToDisk: true,
+    },
   },
   devtool: "eval",
   plugins: [

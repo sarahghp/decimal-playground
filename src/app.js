@@ -14,6 +14,7 @@ import {
   CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
+  DEC_128_PREFIX,
 } from "./constants.js";
 
 import { Controls } from "./controls.js";
@@ -26,6 +27,11 @@ const implementations = {
   [DECIMAL_128]: Dec128,
 };
 
+const prefixes = {
+  [BIG_DECIMAL]: "",
+  [DECIMAL_128]: DEC_128_PREFIX,
+};
+
 const babelOptions = {
   presets: [[PresetEnv, { modules: false }], [PresetReact]],
 };
@@ -34,10 +40,15 @@ const useTransformedOutput = (code, decimalImpl) => {
   const [transformed, setTransformed] = useState("");
   const [transformationError, setTransformationError] = useState(null);
 
+  const prefixedCode = `
+    ${prefixes[decimalImpl]}
+    ${code}
+  `;
+
   useEffect(() => {
     const transformOutput = async () => {
       try {
-        const result = await transformAsync(code, {
+        const result = await transformAsync(prefixedCode, {
           ...babelOptions,
           plugins: [[implementations[decimalImpl]]],
         });

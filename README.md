@@ -21,7 +21,9 @@ There is a [list of features to be implemented](https://sarahghp.notion.site/083
 
 ### Local Server
 
-To run the project locally, run `npx webpack serve` in one terminal window and `npx webpack --watch` in another.
+To run the project locally, run `npm run dev` in a terminal window.
+
+(Before committing, make sure to run `npm run build` to remove the hot-reload functionality from the bundle.)
 
 ### Tests
 
