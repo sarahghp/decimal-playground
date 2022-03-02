@@ -23,33 +23,35 @@ export const passesGeneralChecks = (path, knownDecimalNodes, opToName) => {
   }
 };
 
-export const replaceWithDecimal = (t) => (path) => {
+export const replaceWithDecimal = (t, implementationIdentifier) => (path) => {
   const num = t.stringLiteral(path.node.value);
-  const callee = t.identifier("Decimal");
+  const callee = t.identifier(implementationIdentifier);
 
   path.replaceWith(t.callExpression(callee, [num]));
 };
 
-export const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
-  const { argument, operator } = path.node;
+export const replaceWithUnaryDecimalExpression =
+  (t, knownDecimalNodes) => (path) => {
+    const { argument, operator } = path.node;
 
-  if (!knownDecimalNodes.has(argument)) {
-    return;
-  }
+    if (!knownDecimalNodes.has(argument)) {
+      return;
+    }
 
-  if (operator !== "-") {
-    throw path.buildCodeFrameError(
-      new SyntaxError(`${operator} is not currently supported.`));
-  }
+    if (operator !== "-") {
+      throw path.buildCodeFrameError(
+        new SyntaxError(`${operator} is not currently supported.`)
+      );
+    }
 
-  const member = t.memberExpression(argument, t.identifier("neg"));
-  const newNode = t.callExpression(member, []);
+    const member = t.memberExpression(argument, t.identifier("neg"));
+    const newNode = t.callExpression(member, []);
 
-  knownDecimalNodes.add(newNode);
+    knownDecimalNodes.add(newNode);
 
-  path.replaceWith(newNode);
-  path.skip();
-};
+    path.replaceWith(newNode);
+    path.skip();
+  };
 
 export const sharedOpts = {
   "+": "add",
