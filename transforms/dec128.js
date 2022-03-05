@@ -1,5 +1,6 @@
 import {
   earlyReturn,
+  isMathMethod,
   passesGeneralChecks,
   replaceWithDecimal,
   replaceWithUnaryDecimalExpression,
@@ -38,8 +39,21 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 };
 
 const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
-  if (path.get("callee").isIdentifier({ name: implementationIdentifier })) {
+  const callee = path.get("callee");
+  if (callee.isIdentifier({ name: implementationIdentifier })) {
     knownDecimalNodes.add(path.node);
+    return;
+  }
+
+  // Keep in sync with implementations in the preamble
+  const supportedMathMethods = ["abs", "floor", "log10", "pow"];
+
+  const methodName = isMathMethod(callee);
+  if (methodName && supportedMathMethods.includes(methodName)) {
+    const args = path.get("arguments");
+    if (args.every((arg) => knownDecimalNodes.has(arg.node))) {
+      knownDecimalNodes.add(path.node);
+    }
   }
 };
 
@@ -56,7 +70,9 @@ export default function (babel) {
       BinaryExpression: {
         exit: replaceWithDecimalExpression(t, knownDecimalNodes),
       },
-      CallExpression: addToDecimalNodes(t, knownDecimalNodes),
+      CallExpression: {
+        exit: addToDecimalNodes(t, knownDecimalNodes),
+      },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),

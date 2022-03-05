@@ -86,6 +86,29 @@ const inFunctions = {
   },
 };
 
+const withKnownDecimalInputs = {
+  "unary Math method with known decimal input is known to be decimal": {
+    code: "-Math.abs(-1.5m);",
+    output: `Math.abs(${libName}("1.5").neg()).neg();`,
+  },
+  "unary Math method with known non-decimal input is not transformed": {
+    code: "-Math.abs(-1.5);",
+    output: "-Math.abs(-1.5);",
+  },
+  "n-ary Math method with known decimal inputs is known to be decimal": {
+    code: "-Math.pow(1.01m, 12m);",
+    output: `Math.pow(${libName}("1.01"), ${libName}("12")).neg();`,
+  },
+  "n-ary Math method with known non-decimal inputs is not transformed": {
+    code: "-Math.pow(1.01, 12);",
+    output: "-Math.pow(1.01, 12);",
+  },
+  "n-ary math method with mixed inputs is not transformed": {
+    code: "-Math.pow(1.01m, 12);",
+    output: `-Math.pow(${libName}("1.01"), 12);`,
+  },
+};
+
 pluginTester({
   plugin: pluginBigDec,
   pluginName: "plugin-big-decimal",
@@ -95,5 +118,6 @@ pluginTester({
     ...inBinaryExpressions,
     ...inFunctions,
     ...doesNotChangeNumbers,
+    ...withKnownDecimalInputs,
   },
 });
