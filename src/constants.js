@@ -22,11 +22,6 @@ b.style.float = 'right';
 document.querySelector('body').append(b);
 `;
 
-const DEC_128_PREFIX = `
-  // Decimal128 allows for 34 digits of significand
-  Decimal.set({precision: 34});
-`;
-
 const EDITOR_OPTIONS = {
   fontSize: 18,
   theme: "vs-dark",
@@ -58,5 +53,4 @@ export {
   CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
-  DEC_128_PREFIX,
 };

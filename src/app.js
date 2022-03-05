@@ -14,7 +14,6 @@ import {
   CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
-  DEC_128_PREFIX,
 } from "./constants.js";
 
 import { Controls } from "./controls.js";
@@ -27,9 +26,9 @@ const implementations = {
   [DECIMAL_128]: Dec128,
 };
 
-const prefixes = {
-  [BIG_DECIMAL]: "",
-  [DECIMAL_128]: DEC_128_PREFIX,
+const preambles = {
+  [BIG_DECIMAL]: "/preamble-big.js",
+  [DECIMAL_128]: "/preamble-128.js",
 };
 
 const babelOptions = {
@@ -40,14 +39,17 @@ const useTransformedOutput = (code, decimalImpl) => {
   const [transformed, setTransformed] = useState("");
   const [transformationError, setTransformationError] = useState(null);
 
-  const prefixedCode = `
-    ${prefixes[decimalImpl]}
-    ${code}
-  `;
-
   useEffect(() => {
     const transformOutput = async () => {
       try {
+        const response = await fetch(preambles[decimalImpl]);
+        const preamble = await response.text();
+        const encodedPreamble = btoa(preamble);
+        const prefixedCode = `
+          import "data:text/javascript;base64,${encodedPreamble}";\n
+          ${code}
+        `;
+
         const result = await transformAsync(prefixedCode, {
           ...babelOptions,
           plugins: [[implementations[decimalImpl]]],
