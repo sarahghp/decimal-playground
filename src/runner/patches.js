@@ -48,3 +48,41 @@ const createNaryHandler = (substituteFns, refiner = () => true) => ({
     }
   },
 });
+
+const absImpl = {
+  [DECIMAL_128]: Decimal.abs.bind(Decimal),
+  [BIG_DECIMAL]: (arg) => arg.abs(),
+};
+
+const floorImpl = {
+  [DECIMAL_128]: Decimal.floor.bind(Decimal),
+  [BIG_DECIMAL](arg) {
+    const mode = arg.gt(0) ? Big.roundDown : Big.roundUp;
+    return arg.round(0, mode);
+  },
+};
+
+const log10Impl = {
+  [DECIMAL_128]: Decimal.log10.bind(Decimal),
+  [BIG_DECIMAL]() {
+    throw new Error("Math.log10() not supported for BigDecimal");
+  },
+};
+
+const powImpl = {
+  [DECIMAL_128]: Decimal.pow.bind(Decimal),
+  [BIG_DECIMAL](base, exponent) {
+    return base.pow(exponent.toNumber());
+  },
+};
+
+// Keep in sync with supportedMathMethods in transforms/shared.js
+Math.abs = new Proxy(Math.abs, createUnaryHandler(absImpl));
+Math.floor = new Proxy(Math.floor, createUnaryHandler(floorImpl));
+Math.log10 = new Proxy(Math.log10, createUnaryHandler(log10Impl));
+Math.pow = new Proxy(
+  Math.pow,
+  createNaryHandler(powImpl, (args) =>
+    args.every((arg) => arg instanceof Decimal || arg instanceof Big)
+  )
+);
