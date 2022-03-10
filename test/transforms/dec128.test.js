@@ -90,7 +90,18 @@ const inFunctions = {
   },
 };
 
+const longDecimalRoundOutput = `
+  Decimal.round(Decimal("1.5"), {
+    roundingMode: "up",
+    maximumFractionDigits: 0,
+  }).neg();
+`;
+
 const withKnownDecimalInputs = {
+  "works with Decimal.round": {
+    code: '-Decimal.round(1.5m, { roundingMode: "up", maximumFractionDigits: 0 });',
+    output: longDecimalRoundOutput,
+  },
   "unary Math method with known decimal input is known to be decimal": {
     code: "-Math.abs(-1.5m);",
     output: 'Math.abs(Decimal("1.5").neg()).neg();',

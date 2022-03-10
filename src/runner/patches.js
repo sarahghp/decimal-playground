@@ -5,16 +5,17 @@ import {
   DECIMAL_128,
   PATCHED_MATH_METHODS,
 } from "../constants.js";
+import { roundImpl } from "./patch-round.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
     const [arg] = argsList;
     if (arg instanceof Decimal) {
-      return substituteFns[DECIMAL_128](arg);
+      return substituteFns[DECIMAL_128](...argsList);
     }
 
     if (arg instanceof Big) {
-      return substituteFns[BIG_DECIMAL](arg);
+      return substituteFns[BIG_DECIMAL](...argsList);
     }
 
     return target.apply(thisArg, argsList);
@@ -95,3 +96,7 @@ if (PATCHED_MATH_METHODS.length !== Object.keys(handlers).length) {
 PATCHED_MATH_METHODS.forEach((method) => {
   Math[method] = new Proxy(Math[method], handlers[method]);
 });
+
+Decimal.round = new Proxy(() => {
+  throw new TypeError("Decimal.round argument must be a Decimal");
+}, createUnaryHandler(roundImpl));
