@@ -55,7 +55,9 @@ const useTransformedOutput = (code, decimalImpl) => {
         setTransformed(result.code);
         setTransformationError(null);
       } catch (err) {
-        setTransformationError(err);
+        setTransformationError(
+          `${err?.message ?? "Error"}\n${err?.stack ?? ""}`
+        );
       }
     };
 
@@ -155,7 +157,7 @@ const App = ({ editorModel, output, configOpts }) => {
         />
         <Output
           orderClass={orderClass(OUTPUT)}
-          content={transformationError?.message || transformedOutput}
+          content={transformationError ?? transformedOutput}
         />
         <Results
           order={{
