@@ -21,6 +21,14 @@ export const addToDecimalNodes =
             knownDecimalNodes.add(path.node);
           }
         }
+        return;
+      }
+
+      if (
+        object.isIdentifier({ name: "Decimal" }) &&
+        property.isIdentifier({ name: "round" })
+      ) {
+        knownDecimalNodes.add(path.node);
       }
     }
   };
