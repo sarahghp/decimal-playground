@@ -42,11 +42,11 @@ const useTransformedOutput = (code, decimalImpl) => {
   useEffect(() => {
     const transformOutput = async () => {
       try {
-        const response = await fetch(preambles[decimalImpl]);
-        const preamble = await response.text();
-        const encodedPreamble = btoa(preamble);
+        // const response = await fetch(preambles[decimalImpl]);
+        // const preamble = await response.text();
+        // const encodedPreamble = btoa(preamble);
+        // new Proxy(Math.abs, createUnaryHandler(Decimal.abs))
         const prefixedCode = `
-          import "data:text/javascript;base64,${encodedPreamble}";\n
           ${code}
         `;
 

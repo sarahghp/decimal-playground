@@ -1,12 +1,30 @@
 /* global Decimal */
 
+const createUnaryHandler = (decimalSubstituteFn) => ({
+  apply(target, thisArg, argsList) {
+    const [arg] = argsList;
+    if (arg instanceof Decimal) {
+      // by passing the function then we don't need different functions
+      // for those that are called the same way in the Decimal lib and
+      // those called differently
+      return decimalSubstituteFn.apply(thisArg, arg);
+    }
+
+    return target.apply(thisArg, argsList);
+  },
+});
+
+console.log(Decimal.abs);
+
+Math.abs = new Proxy(Math.abs, createUnaryHandler(Decimal.abs));
+
 // Decimal128 allows for 34 digits of significand
 Decimal.set({ precision: 34 });
 
 const _realMathMethods = {};
 
 // unary Math methods that have a corresponding Decimal static method
-["abs", "floor", "log10"].forEach((mathMethod) => {
+["floor", "log10"].forEach((mathMethod) => {
   _realMathMethods[mathMethod] = Math[mathMethod];
   Math[mathMethod] = function (arg) {
     if (arg instanceof Decimal) return Decimal[mathMethod](arg);
