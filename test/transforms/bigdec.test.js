@@ -1,7 +1,7 @@
 import pluginTester from "babel-plugin-tester";
 import pluginBigDec from "../../transforms/bigdec.js";
 
-const libName = 'Big';
+const libName = "Big";
 
 const basic = {
   "transforms literal": {
