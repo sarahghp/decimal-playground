@@ -1,13 +1,14 @@
 /* global Big, Decimal */
 
-const DEC_128 = "decimal128";
-const BIG_DECIMAL = "bigdec";
+// Keep in sync with src/constants.js
+const BIG_DECIMAL = "big decimal";
+const DECIMAL_128 = "decimal 128";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
     const [arg] = argsList;
     if (arg instanceof Decimal) {
-      return substituteFns[DEC_128](arg);
+      return substituteFns[DECIMAL_128](arg);
     }
 
     if (arg instanceof Big) {
@@ -39,7 +40,7 @@ const createNaryHandler = (substituteFns, refiner = () => true) => ({
     // We assume that the args are not mixed decimal versions
     // because if they are other things have gone very badly
     if (argsList[0] instanceof Decimal) {
-      return substituteFns[DEC_128](...argsList);
+      return substituteFns[DECIMAL_128](...argsList);
     }
 
     if (argsList[0] instanceof Big) {
