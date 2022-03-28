@@ -2,6 +2,20 @@ export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
 
+export const isMathMethod = (expr) => {
+  if (!expr.isMemberExpression()) {
+    return false;
+  }
+
+  const object = expr.get("object");
+  const property = expr.get("property");
+  if (!object.isIdentifier({ name: "Math" }) || !property.isIdentifier()) {
+    return false;
+  }
+
+  return property.node.name;
+};
+
 export const passesGeneralChecks = (path, knownDecimalNodes, opToName) => {
   const includedOps = new Map(Object.entries(opToName));
 
@@ -58,3 +72,6 @@ export const sharedOpts = {
   "*": "mul",
   "-": "sub",
 };
+
+// Keep in sync with implementations in src/runner/patches.js
+export const supportedMathMethods = ["abs", "floor", "log10", "pow"];
