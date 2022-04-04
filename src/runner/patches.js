@@ -1,8 +1,8 @@
 /* global Big, Decimal */
 
-// Keep in sync with src/constants.js
-const BIG_DECIMAL = "big decimal";
-const DECIMAL_128 = "decimal 128";
+import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
+
+import { roundImpl, roundRefiner } from "./patch-round.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
@@ -85,4 +85,9 @@ Math.pow = new Proxy(
   createNaryHandler(powImpl, (args) =>
     args.every((arg) => arg instanceof Decimal || arg instanceof Big)
   )
+);
+
+Decimal.round = new Proxy(
+  Decimal.round,
+  createNaryHandler(roundImpl, roundRefiner)
 );

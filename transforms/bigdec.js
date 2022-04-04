@@ -1,5 +1,6 @@
 import {
   earlyReturn,
+  isDecimalRound,
   isMathMethod,
   passesGeneralChecks,
   replaceWithDecimal,
@@ -49,6 +50,13 @@ const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
     if (args.every((arg) => knownDecimalNodes.has(arg.node))) {
       knownDecimalNodes.add(path.node);
     }
+
+    return;
+  }
+
+  if (isDecimalRound(callee)) {
+    knownDecimalNodes.add(path.node);
+    return;
   }
 };
 

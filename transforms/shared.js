@@ -2,6 +2,19 @@ export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
 
+export const isDecimalRound = (expr) => {
+  if (!expr.isMemberExpression()) {
+    return false;
+  }
+
+  const object = expr.get("object");
+  const property = expr.get("property");
+  return (
+    object.isIdentifier({ name: "Decimal" }) &&
+    property.isIdentifier({ name: "round" })
+  );
+};
+
 export const isMathMethod = (expr) => {
   if (!expr.isMemberExpression()) {
     return false;

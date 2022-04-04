@@ -1,5 +1,6 @@
 import {
   earlyReturn,
+  isDecimalRound,
   isMathMethod,
   passesGeneralChecks,
   replaceWithDecimal,
@@ -46,12 +47,22 @@ const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
+  // TODO: Abstract these so we don't just grow a list here, but do
+  // so somewhere more predictable & sharable since these checks are
+  // being repeated in the bigdec checks
+  // TODO 2: Update the isMathMethod to always return the same type :)
   const methodName = isMathMethod(callee);
   if (methodName && supportedMathMethods.includes(methodName)) {
     const args = path.get("arguments");
     if (args.every((arg) => knownDecimalNodes.has(arg.node))) {
       knownDecimalNodes.add(path.node);
     }
+    return;
+  }
+
+  if (isDecimalRound(callee)) {
+    knownDecimalNodes.add(path.node);
+    return;
   }
 };
 
