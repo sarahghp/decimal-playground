@@ -1,8 +1,6 @@
 /* global Big, Decimal */
 
-// Keep in sync with src/constants.js
-const BIG_DECIMAL = "big decimal";
-const DECIMAL_128 = "decimal 128";
+import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
