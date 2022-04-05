@@ -44,7 +44,6 @@ const EDITOR = "Editor";
 const OUTPUT = "Output";
 const THREE_UP = "columns";
 const CHECKERBOARD = "checkerboard";
-// Keep in sync with src/runner/patches.js
 const BIG_DECIMAL = "big decimal";
 const DECIMAL_128 = "decimal 128";
 
