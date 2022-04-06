@@ -1,3 +1,5 @@
+import { PATCHED_MATH_METHODS } from "../src/constants.js";
+
 export const addToDecimalNodes =
   (t, knownDecimalNodes, implementationIdentifier) => (path) => {
     const callee = path.get("callee");
@@ -11,11 +13,9 @@ export const addToDecimalNodes =
       const property = callee.get("property");
 
       if (object.isIdentifier({ name: "Math" }) && property.isIdentifier()) {
-        // Keep in sync with implementations in src/runner/patches.js
-        const supportedMathMethods = ["abs", "floor", "log10", "pow"];
         const methodName = property.node.name;
 
-        if (supportedMathMethods.includes(methodName)) {
+        if (PATCHED_MATH_METHODS.includes(methodName)) {
           const args = path.get("arguments");
           if (args.every((arg) => knownDecimalNodes.has(arg.node))) {
             knownDecimalNodes.add(path.node);

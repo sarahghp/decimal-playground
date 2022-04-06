@@ -1,6 +1,10 @@
 /* global Big, Decimal */
 
-import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
+import {
+  BIG_DECIMAL,
+  DECIMAL_128,
+  PATCHED_MATH_METHODS,
+} from "../constants.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
@@ -74,13 +78,20 @@ const powImpl = {
   },
 };
 
-// Keep in sync with supportedMathMethods in transforms/shared.js
-Math.abs = new Proxy(Math.abs, createUnaryHandler(absImpl));
-Math.floor = new Proxy(Math.floor, createUnaryHandler(floorImpl));
-Math.log10 = new Proxy(Math.log10, createUnaryHandler(log10Impl));
-Math.pow = new Proxy(
-  Math.pow,
-  createNaryHandler(powImpl, (args) =>
+const handlers = {
+  abs: createUnaryHandler(absImpl),
+  floor: createUnaryHandler(floorImpl),
+  log10: createUnaryHandler(log10Impl),
+  pow: createNaryHandler(powImpl, (args) =>
     args.every((arg) => arg instanceof Decimal || arg instanceof Big)
-  )
-);
+  ),
+};
+
+// consistency check; if the sets are different, `new Proxy()` will throw below
+if (PATCHED_MATH_METHODS.length !== Object.keys(handlers).length) {
+  throw new Error(`Programmer error: patched Math method missing`);
+}
+
+PATCHED_MATH_METHODS.forEach((method) => {
+  Math[method] = new Proxy(Math[method], handlers[method]);
+});
