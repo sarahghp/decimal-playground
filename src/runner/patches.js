@@ -6,6 +6,7 @@ import {
   PATCHED_MATH_METHODS,
 } from "../constants.js";
 import { roundImpl } from "./patch-round.js";
+import { throwUnimplemented } from "./patch-util.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
@@ -68,7 +69,7 @@ const floorImpl = {
 const log10Impl = {
   [DECIMAL_128]: Decimal.log10.bind(Decimal),
   [BIG_DECIMAL]() {
-    throw new Error("Math.log10() not supported for BigDecimal");
+    throwUnimplemented("Math.log10()", "BigDecimal");
   },
 };
 
