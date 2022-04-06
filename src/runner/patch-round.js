@@ -1,6 +1,7 @@
 /* global Big, Decimal */
 
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
+import { throwUnimplemented } from "./patch-util.js";
 
 const RoundingMode = {
   UP: "up",
@@ -46,8 +47,9 @@ const roundingModeImpl = {
   },
   [BIG_DECIMAL](mode) {
     if (mode === RoundingMode.HALF_DOWN) {
-      throw new Error(
-        `"${RoundingMode.HALF_DOWN}" rounding mode not yet supported for BigDecimal. Let us know if you need this!`
+      throwUnimplemented(
+        `"${RoundingMode.HALF_DOWN}" rounding mode`,
+        "BigDecimal"
       );
     }
     if (!bigDecModes.has(mode)) {
