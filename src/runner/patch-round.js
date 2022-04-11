@@ -68,53 +68,36 @@ const roundFractionImpl = {
   },
 };
 
-const roundSignificantImpl = {
-  [DECIMAL_128](arg, significantDigits, mode) {
-    return arg.toSignificantDigits(significantDigits, mode);
-  },
-  [BIG_DECIMAL](arg, significantDigits, mode) {
-    return arg.prec(significantDigits, mode);
-  },
-};
-
-function round(decimal, options = Object.create(null)) {
+const round = (decimal, options = {}) => {
   // decimal argument is guaranteed to be either a Decimal or Big here
   const implName = decimal instanceof Decimal ? DECIMAL_128 : BIG_DECIMAL;
 
-  if (!options || typeof options !== "object") {
-    throw new TypeError("second argument to Decimal.round() must be an object");
+  if (typeof options !== "object") {
+    throw new TypeError("Second argument to Decimal.round() must be an object");
   }
 
-  let { maximumFractionDigits, maximumSignificantDigits, roundingMode } =
-    options;
+  let { maximumFractionDigits, roundingMode } = options;
 
-  if (roundingMode === undefined) {
-    throw new TypeError("roundingMode option is required for Decimal.round()");
+  if (!roundingMode) {
+    throw new TypeError("RoundingMode option is required for Decimal.round()");
   }
+
+  const coercedFractionDigits = Number(maximumFractionDigits);
+
+  if (!(coercedFractionDigits >= 0)) {
+    throw new TypeError(
+      "MaximumFractionDigits option is required for Decimal.round()"
+    );
+  }
+
   const internalMode = roundingModeImpl[implName](roundingMode);
 
-  if (maximumFractionDigits !== undefined) {
-    maximumFractionDigits = +maximumFractionDigits;
-    return roundFractionImpl[implName](
-      decimal,
-      maximumFractionDigits,
-      internalMode
-    );
-  }
-
-  if (maximumSignificantDigits !== undefined) {
-    maximumSignificantDigits = +maximumSignificantDigits;
-    return roundSignificantImpl[implName](
-      decimal,
-      maximumSignificantDigits,
-      internalMode
-    );
-  }
-
-  throw new TypeError(
-    "one of maximumFractionDigits or maximumSignificantDigits options is required for Decimal.round()"
+  return roundFractionImpl[implName](
+    decimal,
+    coercedFractionDigits,
+    internalMode
   );
-}
+};
 
 export const roundImpl = {
   [DECIMAL_128](decimal, options) {

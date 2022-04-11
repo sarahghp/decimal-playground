@@ -31,7 +31,7 @@ describe("Runtime tests for BigDecimal", function () {
       );
     });
 
-    it("throws on missing maximumFractionDigits/maximumSignificantDigits", function () {
+    it("throws on missing maximumFractionDigits", function () {
       expect(() => Decimal.round(pi, { roundingMode: "half-up" })).toThrow(
         TypeError
       );
@@ -45,16 +45,6 @@ describe("Runtime tests for BigDecimal", function () {
       expect(
         Decimal.round(pi, { maximumFractionDigits: 6, roundingMode })
       ).toEqual(Big("3.141593"));
-    });
-
-    it("rounds to maximumFractionDigits", function () {
-      const roundingMode = "half-up";
-      expect(
-        Decimal.round(pi, { maximumSignificantDigits: 4, roundingMode })
-      ).toEqual(Big("3.142"));
-      expect(
-        Decimal.round(pi, { maximumSignificantDigits: 6, roundingMode })
-      ).toEqual(Big("3.14159"));
     });
 
     it("up rounding mode", function () {
