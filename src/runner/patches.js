@@ -6,7 +6,7 @@ import {
   PATCHED_MATH_METHODS,
 } from "../constants.js";
 import { roundImpl } from "./patch-round.js";
-import { throwUnimplemented } from "./patch-util.js";
+import { decimalOnlyBaseFn, throwUnimplemented } from "./patch-util.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
@@ -98,6 +98,7 @@ PATCHED_MATH_METHODS.forEach((method) => {
   Math[method] = new Proxy(Math[method], handlers[method]);
 });
 
-Decimal.round = new Proxy(() => {
-  throw new TypeError("Decimal.round argument must be a Decimal");
-}, createUnaryHandler(roundImpl));
+Decimal.round = new Proxy(
+  decimalOnlyBaseFn("Decimal.round"),
+  createUnaryHandler(roundImpl)
+);
