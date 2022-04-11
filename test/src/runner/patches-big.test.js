@@ -9,6 +9,115 @@ describe("Runtime tests for BigDecimal", function () {
     return import("../../../src/runner/patches.js");
   });
 
+  describe("Decimal.round", function () {
+    let pi, options;
+
+    beforeAll(function () {
+      pi = Big("3.14159265358979");
+      options = { maximumFractionDigits: 10, roundingMode: "half-up" };
+    });
+
+    it("handles decimal", function () {
+      expect(() => Decimal.round(pi, options)).not.toThrow();
+    });
+
+    it("throws on non-decimal", function () {
+      expect(() => Decimal.round(3.14159265358979, options)).toThrow(TypeError);
+    });
+
+    it("throws on missing roundingMode", function () {
+      expect(() => Decimal.round(pi, { maximumFractionDigits: 10 })).toThrow(
+        TypeError
+      );
+    });
+
+    it("throws on missing maximumFractionDigits/maximumSignificantDigits", function () {
+      expect(() => Decimal.round(pi, { roundingMode: "half-up" })).toThrow(
+        TypeError
+      );
+    });
+
+    it("rounds to maximumFractionDigits", function () {
+      const roundingMode = "half-up";
+      expect(
+        Decimal.round(pi, { maximumFractionDigits: 4, roundingMode })
+      ).toEqual(Big("3.1416"));
+      expect(
+        Decimal.round(pi, { maximumFractionDigits: 6, roundingMode })
+      ).toEqual(Big("3.141593"));
+    });
+
+    it("rounds to maximumFractionDigits", function () {
+      const roundingMode = "half-up";
+      expect(
+        Decimal.round(pi, { maximumSignificantDigits: 4, roundingMode })
+      ).toEqual(Big("3.142"));
+      expect(
+        Decimal.round(pi, { maximumSignificantDigits: 6, roundingMode })
+      ).toEqual(Big("3.14159"));
+    });
+
+    it("up rounding mode", function () {
+      const options = { maximumFractionDigits: 0, roundingMode: "up" };
+      expect(Decimal.round(Big("1.1"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("1.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("1.9"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("2.5"), options)).toEqual(Big("3"));
+      expect(Decimal.round(Big("-1.1"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-1.5"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-1.9"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-2.5"), options)).toEqual(Big("-3"));
+    });
+
+    it("down rounding mode", function () {
+      const options = { maximumFractionDigits: 0, roundingMode: "down" };
+      expect(Decimal.round(Big("1.1"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.5"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.9"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("2.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("-1.1"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.5"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.9"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-2.5"), options)).toEqual(Big("-2"));
+    });
+
+    it("half-up rounding mode", function () {
+      const options = { maximumFractionDigits: 0, roundingMode: "half-up" };
+      expect(Decimal.round(Big("1.1"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("1.9"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("2.5"), options)).toEqual(Big("3"));
+      expect(Decimal.round(Big("-1.1"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.5"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-1.9"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-2.5"), options)).toEqual(Big("-3"));
+    });
+
+    it.skip("half-down rounding mode", function () {
+      const options = { maximumFractionDigits: 0, roundingMode: "half-down" };
+      expect(Decimal.round(Big("1.1"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.5"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.9"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("2.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("-1.1"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.5"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.9"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-2.5"), options)).toEqual(Big("-2"));
+    });
+
+    it("half-even rounding mode", function () {
+      const options = { maximumFractionDigits: 0, roundingMode: "half-even" };
+      expect(Decimal.round(Big("1.1"), options)).toEqual(Big("1"));
+      expect(Decimal.round(Big("1.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("1.9"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("2.5"), options)).toEqual(Big("2"));
+      expect(Decimal.round(Big("-1.1"), options)).toEqual(Big("-1"));
+      expect(Decimal.round(Big("-1.5"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-1.9"), options)).toEqual(Big("-2"));
+      expect(Decimal.round(Big("-2.5"), options)).toEqual(Big("-2"));
+    });
+  });
+
   describe("Math.abs", function () {
     it("handles decimal", function () {
       expect(Math.abs(Big("-1.5"))).toEqual(Big("1.5"));

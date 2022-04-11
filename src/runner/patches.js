@@ -1,18 +1,22 @@
 /* global Big, Decimal */
 
-// Keep in sync with src/constants.js
-const BIG_DECIMAL = "big decimal";
-const DECIMAL_128 = "decimal 128";
+import {
+  BIG_DECIMAL,
+  DECIMAL_128,
+  PATCHED_MATH_METHODS,
+} from "../constants.js";
+import { roundImpl } from "./patch-round.js";
+import { throwUnimplemented } from "./patch-util.js";
 
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
     const [arg] = argsList;
     if (arg instanceof Decimal) {
-      return substituteFns[DECIMAL_128](arg);
+      return substituteFns[DECIMAL_128](...argsList);
     }
 
     if (arg instanceof Big) {
-      return substituteFns[BIG_DECIMAL](arg);
+      return substituteFns[BIG_DECIMAL](...argsList);
     }
 
     return target.apply(thisArg, argsList);
@@ -65,7 +69,7 @@ const floorImpl = {
 const log10Impl = {
   [DECIMAL_128]: Decimal.log10.bind(Decimal),
   [BIG_DECIMAL]() {
-    throw new Error("Math.log10() not supported for BigDecimal");
+    throwUnimplemented("Math.log10()", "BigDecimal");
   },
 };
 
@@ -76,13 +80,24 @@ const powImpl = {
   },
 };
 
-// Keep in sync with supportedMathMethods in transforms/shared.js
-Math.abs = new Proxy(Math.abs, createUnaryHandler(absImpl));
-Math.floor = new Proxy(Math.floor, createUnaryHandler(floorImpl));
-Math.log10 = new Proxy(Math.log10, createUnaryHandler(log10Impl));
-Math.pow = new Proxy(
-  Math.pow,
-  createNaryHandler(powImpl, (args) =>
+const handlers = {
+  abs: createUnaryHandler(absImpl),
+  floor: createUnaryHandler(floorImpl),
+  log10: createUnaryHandler(log10Impl),
+  pow: createNaryHandler(powImpl, (args) =>
     args.every((arg) => arg instanceof Decimal || arg instanceof Big)
-  )
-);
+  ),
+};
+
+// consistency check; if the sets are different, `new Proxy()` will throw below
+if (PATCHED_MATH_METHODS.length !== Object.keys(handlers).length) {
+  throw new Error(`Programmer error: patched Math method missing`);
+}
+
+PATCHED_MATH_METHODS.forEach((method) => {
+  Math[method] = new Proxy(Math[method], handlers[method]);
+});
+
+Decimal.round = new Proxy(() => {
+  throw new TypeError("Decimal.round argument must be a Decimal");
+}, createUnaryHandler(roundImpl));
