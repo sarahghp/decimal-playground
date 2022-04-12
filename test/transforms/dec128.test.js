@@ -90,6 +90,40 @@ const inFunctions = {
   },
 };
 
+const longDecimalRoundOutput = `
+  Decimal.round(Decimal("1.5"), {
+    roundingMode: "up",
+    maximumFractionDigits: 0,
+  }).neg();
+`;
+
+const withKnownDecimalInputs = {
+  "works with Decimal.round": {
+    code: '-Decimal.round(1.5m, { roundingMode: "up", maximumFractionDigits: 0 });',
+    output: longDecimalRoundOutput,
+  },
+  "unary Math method with known decimal input is known to be decimal": {
+    code: "-Math.abs(-1.5m);",
+    output: 'Math.abs(Decimal("1.5").neg()).neg();',
+  },
+  "unary Math method with known non-decimal input is not transformed": {
+    code: "-Math.abs(-1.5);",
+    output: "-Math.abs(-1.5);",
+  },
+  "n-ary Math method with known decimal inputs is known to be decimal": {
+    code: "-Math.pow(1.01m, 12m);",
+    output: 'Math.pow(Decimal("1.01"), Decimal("12")).neg();',
+  },
+  "n-ary Math method with known non-decimal inputs is not transformed": {
+    code: "-Math.pow(1.01, 12);",
+    output: "-Math.pow(1.01, 12);",
+  },
+  "n-ary math method with mixed inputs is not transformed": {
+    code: "-Math.pow(1.01m, 12);",
+    output: '-Math.pow(Decimal("1.01"), 12);',
+  },
+};
+
 pluginTester({
   plugin: pluginDec128,
   pluginName: "plugin-decimal-128",
@@ -99,5 +133,6 @@ pluginTester({
     ...inBinaryExpressions,
     ...inFunctions,
     ...doesNotChangeNumbers,
+    ...withKnownDecimalInputs,
   },
 });

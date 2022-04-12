@@ -47,6 +47,8 @@ const CHECKERBOARD = "checkerboard";
 const BIG_DECIMAL = "big decimal";
 const DECIMAL_128 = "decimal 128";
 
+const PATCHED_MATH_METHODS = ["abs", "floor", "log10", "pow"];
+
 export {
   DEFAULT_TEXT,
   EDITOR_OPTIONS,
@@ -59,4 +61,5 @@ export {
   BIG_DECIMAL,
   DECIMAL_128,
   DEC_128_PREFIX,
+  PATCHED_MATH_METHODS,
 };

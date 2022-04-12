@@ -1,4 +1,5 @@
 import {
+  addToDecimalNodes,
   earlyReturn,
   passesGeneralChecks,
   replaceWithDecimal,
@@ -34,12 +35,6 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   path.skip();
 };
 
-const addToDecimalNodes = (t, knownDecimalNodes) => (path) => {
-  if (path.get("callee").isIdentifier({ name: implementationIdentifier })) {
-    knownDecimalNodes.add(path.node);
-  }
-};
-
 export default function (babel) {
   const { types: t } = babel;
   const knownDecimalNodes = new WeakSet();
@@ -53,7 +48,9 @@ export default function (babel) {
       BinaryExpression: {
         exit: replaceWithDecimalExpression(t, knownDecimalNodes),
       },
-      CallExpression: addToDecimalNodes(t, knownDecimalNodes),
+      CallExpression: {
+        exit: addToDecimalNodes(t, knownDecimalNodes, implementationIdentifier),
+      },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
