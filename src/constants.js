@@ -1,5 +1,5 @@
 const DEFAULT_TEXT = `function snowCactusEscapade() {
-    return 11.1m + 12.m;
+    return 11.1m + 12.1m;
 }
 
 let x = snowCactusEscapade();
