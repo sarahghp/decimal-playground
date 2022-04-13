@@ -15,5 +15,5 @@ jobs:
         with:
           node-version: '14'
       - run: |
-        echo The PR was merged
+          echo The PR was merged
       - run: npm run build --if-present
