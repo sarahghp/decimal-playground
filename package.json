@@ -1,5 +1,5 @@
 {
-  "name": "Decimal Proposal Playground",
+  "name": "decimal-proposal-playground",
   "type": "module",
   "scripts": {
     "build": "webpack build",
