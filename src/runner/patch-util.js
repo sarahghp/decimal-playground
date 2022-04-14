@@ -59,5 +59,5 @@ export {
   createUnaryHandler,
   createNaryHandler,
   decimalOnlyBaseFn,
-  throwUnimplemented
+  throwUnimplemented,
 };
