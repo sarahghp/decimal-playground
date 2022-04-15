@@ -33,13 +33,13 @@ const operators = {
     code: "10.3m - 12.4m",
     output: `${libName}("10.3").sub(${libName}("12.4"));`,
   },
-  "converts * to .mult()": {
+  "converts * to .mul()": {
     code: "10.3m * 12.4m",
     output: `${libName}("10.3").mul(${libName}("12.4"));`,
   },
-  "converts unary - to .neg()": {
+  "converts unary - to .mul(-1)": {
     code: "-10.3m + -12.4m",
-    output: `${libName}("10.3").neg().add(${libName}("12.4").neg());`,
+    output: `${libName}("10.3").mul(-1).add(${libName}("12.4").mul(-1));`,
   },
 };
 
@@ -75,7 +75,7 @@ const inBinaryExpressions = {
   },
   "transforms negation of expression": {
     code: "-(0.001m + 17.6m)",
-    output: `${libName}("0.001").add(${libName}("17.6")).neg();`,
+    output: `${libName}("0.001").add(${libName}("17.6")).mul(-1);`,
   },
 };
 
@@ -90,7 +90,7 @@ const longDecimalRoundOutput = `
   Decimal.round(${libName}("1.5"), {
     roundingMode: "up",
     maximumFractionDigits: 0,
-  }).neg();
+  }).mul(-1);
 `;
 
 const withKnownDecimalInputs = {
@@ -100,7 +100,7 @@ const withKnownDecimalInputs = {
   },
   "unary Math method with known decimal input is known to be decimal": {
     code: "-Math.abs(-1.5m);",
-    output: `Math.abs(${libName}("1.5").neg()).neg();`,
+    output: `Math.abs(${libName}("1.5").mul(-1)).mul(-1);`,
   },
   "unary Math method with known non-decimal input is not transformed": {
     code: "-Math.abs(-1.5);",
@@ -108,7 +108,7 @@ const withKnownDecimalInputs = {
   },
   "n-ary Math method with known decimal inputs is known to be decimal": {
     code: "-Math.pow(1.01m, 12m);",
-    output: `Math.pow(${libName}("1.01"), ${libName}("12")).neg();`,
+    output: `Math.pow(${libName}("1.01"), ${libName}("12")).mul(-1);`,
   },
   "n-ary Math method with known non-decimal inputs is not transformed": {
     code: "-Math.pow(1.01, 12);",
