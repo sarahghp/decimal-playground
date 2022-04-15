@@ -24,7 +24,7 @@ document.querySelector('body').append(b);
 
 const DEC_128_PREFIX = `
   // Decimal128 allows for 34 digits of significand
-  Decimal.set({precision: 34});
+  Decimal128.set({precision: 34});
 `;
 
 const EDITOR_OPTIONS = {
@@ -48,6 +48,7 @@ const BIG_DECIMAL = "big decimal";
 const DECIMAL_128 = "decimal 128";
 
 const PATCHED_MATH_METHODS = ["abs", "floor", "log10", "pow"];
+const PATCHED_DECIMAL_METHODS = ["round"];
 
 export {
   DEFAULT_TEXT,
@@ -62,4 +63,5 @@ export {
   DECIMAL_128,
   DEC_128_PREFIX,
   PATCHED_MATH_METHODS,
+  PATCHED_DECIMAL_METHODS,
 };

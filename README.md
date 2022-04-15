@@ -23,7 +23,6 @@ There is a [list of features to be implemented](https://sarahghp.notion.site/083
 
 To run the project locally, run `npm run dev` in a terminal window.
 
-
 ### Tests
 
 All new capabilities added to the `/transforms` directory must have corresponding tests. These are written using [babel-plugin-tester](https://github.com/babel-utils/babel-plugin-tester).

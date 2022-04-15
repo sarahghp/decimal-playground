@@ -51,6 +51,4 @@ const checkAndInitMathHandlers = (createUnaryHandler, createNaryHandler) => {
   });
 };
 
-export {
-  checkAndInitMathHandlers
-}
+export { checkAndInitMathHandlers };
