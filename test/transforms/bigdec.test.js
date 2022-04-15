@@ -21,49 +21,57 @@ const basic = {
 const constructor = {
   "works with plain number": {
     code: "Decimal(1);",
-    output: `${libName}(1);`
+    output: `${libName}(1);`,
   },
   "works with string": {
     code: 'Decimal("1");',
-    output: `${libName}("1");`
+    output: `${libName}("1");`,
   },
   "passes expression through": {
-    code: 'Decimal(1 + 1);',
-    output: `${libName}(1 + 1);`
+    code: "Decimal(1 + 1);",
+    output: `${libName}(1 + 1);`,
   },
   "throws on null": {
     code: "Decimal(null)",
-    error: "TypeError: Can't convert null or undefined to Decimal."
+    error: "TypeError: Can't convert null or undefined to Decimal.",
   },
   "throws on explicit undefined": {
     code: "Decimal(undefined)",
-    error: "TypeError: Can't convert null or undefined to Decimal."
+    error: "TypeError: Can't convert null or undefined to Decimal.",
   },
   "throws on implicit undefined": {
     code: "Decimal()",
-    error: "TypeError: Can't convert null or undefined to Decimal."
+    error: "TypeError: Can't convert null or undefined to Decimal.",
   },
   "coerces boolean true": {
     code: "Decimal(true);",
-    output: `${libName}(1);`
+    output: `${libName}(1);`,
   },
   "coerces boolean false": {
     code: "Decimal(false);",
-    output: `${libName}(0);`
+    output: `${libName}(0);`,
   },
   "coerces BigInt": {
     code: "Decimal(1n);",
-    output: `${libName}("1");`
+    output: `${libName}("1");`,
   },
-  "does not affect Decimal MemberExpressions":{
+  "works with Decimal literal": {
+    code: "Decimal(1.5m);",
+    output: `${libName}(${libName}("1.5"));`,
+  },
+  "works with nested Decimal call": {
+    code: "Decimal(Decimal(1));",
+    output: `${libName}(${libName}(1));`,
+  },
+  "does not affect Decimal MemberExpressions": {
     code: "Decimal.round(24.5m, { roundingMode: 'half-up', maximumFractionDigits: 0, })",
     output: `
     Decimal.round(${libName}("24.5"), {
       roundingMode: "half-up",
       maximumFractionDigits: 0,
-    });`
-  }
-}
+    });`,
+  },
+};
 
 const doesNotChangeNumbers = {
   "does not change Numbers": "111.4 + 12 - 22;",
