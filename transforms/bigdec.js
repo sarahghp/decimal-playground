@@ -3,7 +3,6 @@ import {
   handleCallExpression,
   passesGeneralChecks,
   replaceWithDecimal,
-  replaceWithUnaryDecimalExpression,
   sharedOpts,
 } from "./shared.js";
 
@@ -28,6 +27,30 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   const member = t.memberExpression(left, t.identifier(opToName[operator]));
 
   const newNode = t.callExpression(member, [right]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+};
+
+const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
+  const { argument, operator } = path.node;
+
+  if (!knownDecimalNodes.has(argument)) {
+    return;
+  }
+
+  if (operator !== "-") {
+    throw path.buildCodeFrameError(
+      new SyntaxError(`Unary ${operator} is not currently supported.`)
+    );
+  }
+
+  /* Add function(s) for implementation-specific checks here */
+
+  const member = t.memberExpression(argument, t.identifier("mul"));
+  const newNode = t.callExpression(member, [t.numericLiteral(-1)]);
 
   knownDecimalNodes.add(newNode);
 
