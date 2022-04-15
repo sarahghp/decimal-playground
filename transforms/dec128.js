@@ -1,13 +1,13 @@
 import {
-  addToDecimalNodes,
   earlyReturn,
+  handleCallExpression,
   passesGeneralChecks,
   replaceWithDecimal,
   replaceWithUnaryDecimalExpression,
   sharedOpts,
 } from "./shared.js";
 
-const implementationIdentifier = "Decimal";
+const implementationIdentifier = "Decimal128";
 
 const opToName = {
   ...sharedOpts,
@@ -52,7 +52,11 @@ export default function (babel) {
         exit: replaceWithDecimalExpression(t, knownDecimalNodes),
       },
       CallExpression: {
-        exit: addToDecimalNodes(t, knownDecimalNodes, implementationIdentifier),
+        exit: handleCallExpression(
+          t,
+          knownDecimalNodes,
+          implementationIdentifier
+        ),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       UnaryExpression: {

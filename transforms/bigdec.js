@@ -1,6 +1,6 @@
 import {
-  addToDecimalNodes,
   earlyReturn,
+  handleCallExpression,
   passesGeneralChecks,
   replaceWithDecimal,
   replaceWithUnaryDecimalExpression,
@@ -49,7 +49,11 @@ export default function (babel) {
         exit: replaceWithDecimalExpression(t, knownDecimalNodes),
       },
       CallExpression: {
-        exit: addToDecimalNodes(t, knownDecimalNodes, implementationIdentifier),
+        exit: handleCallExpression(
+          t,
+          knownDecimalNodes,
+          implementationIdentifier
+        ),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       UnaryExpression: {
