@@ -11,10 +11,19 @@ const implementationIdentifier = "Big";
 const opToName = sharedOpts;
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
-  const { left, right, operator } = path.node;
+  let { left, right, operator } = path.node;
 
-  const leftIsDecimal = knownDecimalNodes.has(left);
-  const rightIsDecimal = knownDecimalNodes.has(right);
+  if (path.get("left").isIdentifier()) {
+    left = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [left])
+  }
+
+  if (path.get("right").isIdentifier()) {
+    right = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [right])
+  }
+
+  const argumentIsIdentifier = path.get("left").isIdentifier() || path.get("right").isIdentifier();
+  const leftIsDecimal = knownDecimalNodes.has(left) || argumentIsIdentifier;
+  const rightIsDecimal = knownDecimalNodes.has(right) || argumentIsIdentifier;
 
   if (earlyReturn([!leftIsDecimal && !rightIsDecimal])) {
     return;

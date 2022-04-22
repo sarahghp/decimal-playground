@@ -14,10 +14,20 @@ const opToName = {
 };
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
-  const { left, right, operator } = path.node;
 
-  const leftIsDecimal = knownDecimalNodes.has(left);
-  const rightIsDecimal = knownDecimalNodes.has(right);
+  let { left, right, operator } = path.node;
+
+  if (path.get("left").isIdentifier()) {
+    left = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [left])
+  }
+
+  if (path.get("right").isIdentifier()) {
+    right = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [right])
+  }
+
+  const argumentIsIdentifier = path.get("left").isIdentifier() || path.get("right").isIdentifier();
+  const leftIsDecimal = knownDecimalNodes.has(left) || argumentIsIdentifier;
+  const rightIsDecimal = knownDecimalNodes.has(right) || argumentIsIdentifier;
 
   if (earlyReturn([!leftIsDecimal && !rightIsDecimal])) {
     return;
@@ -29,7 +39,8 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
 
   const member = t.memberExpression(left, t.identifier(opToName[operator]));
 
-  const newNode = t.callExpression(member, [right]);
+  const newNode = t.callExpression(member, [right])
+
 
   knownDecimalNodes.add(newNode);
 

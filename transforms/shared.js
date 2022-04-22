@@ -107,8 +107,8 @@ export const passesGeneralChecks = (path, knownDecimalNodes, opToName) => {
 
   const { left, right, operator } = path.node;
 
-  const leftIsDecimal = knownDecimalNodes.has(left);
-  const rightIsDecimal = knownDecimalNodes.has(right);
+  const leftIsDecimal = knownDecimalNodes.has(left) || path.get("left").isIdentifier();
+  const rightIsDecimal = knownDecimalNodes.has(right) || path.get("right").isIdentifier();
 
   if (leftIsDecimal !== rightIsDecimal) {
     throw path.buildCodeFrameError(
