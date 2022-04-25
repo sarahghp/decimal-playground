@@ -27,6 +27,10 @@ const coerceConstructorArg = (path, t) => {
     return t.StringLiteral(first.node.value);
   }
 
+  if (first.isIdentifier()) {
+    return t.callExpression(t.identifier('wrappedConstructorIdentifier'), [first.node])
+  }
+
   return first.node;
 };
 
