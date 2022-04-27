@@ -112,7 +112,7 @@ export const passesGeneralChecks = (path, knownDecimalNodes, opToName) => {
 
   if (leftIsDecimal !== rightIsDecimal) {
     throw path.buildCodeFrameError(
-      new SyntaxError("Mixed numeric types are not allowed.")
+      new TypeError("Mixed numeric types are not allowed.")
     );
   }
 
