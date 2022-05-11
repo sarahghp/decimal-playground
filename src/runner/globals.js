@@ -5,12 +5,31 @@
 
 const Decimal128 = Decimal.clone();
 
-const wrappedBinaryIdentifier = (a) => {
-  if (!(a instanceof Decimal128 || a instanceof Big)) {
-    throw new SyntaxError("Mixed numeric types are not allowed.")
+const binaryEvaluators = {
+  "+": "add",
+  "*": "mul",
+  "-": "sub",
+  "/": "div",
+};
+
+const binaryExpressionHandler = (left, right, op) => {
+  const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
+
+  const leftIsDecimal = isDecInstance(left);
+  const rightIsDecimal = isDecInstance(right);
+
+  if (leftIsDecimal !== rightIsDecimal) {
+    throw new TypeError("Mixed numeric types are not allowed.");
   }
 
-  return a;
+  // Now that we've gotten rid of mixed items, we know that whatever is
+  // true of left is also true of right
+
+  if (leftIsDecimal) {
+    return left[binaryEvaluators[op]](right);
+  }
+
+  return eval(`${left} ${op} ${right}`);
 };
 
 const wrappedConstructorIdentifier = (a) => {
@@ -27,4 +46,4 @@ const wrappedConstructorIdentifier = (a) => {
   }
 
   return a;
-}
+};

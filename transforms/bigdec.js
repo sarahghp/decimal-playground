@@ -9,33 +9,39 @@ import {
 const implementationIdentifier = "Big";
 
 const opToName = sharedOpts;
+const includedOps = new Map(Object.entries(opToName));
 
 const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
   let { left, right, operator } = path.node;
 
-  if (path.get("left").isIdentifier()) {
-    left = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [left])
-  }
+  const includesIdentifierArgument =
+    path.get("left").isIdentifier() || path.get("right").isIdentifier();
 
-  if (path.get("right").isIdentifier()) {
-    right = t.callExpression(t.identifier('wrappedBinaryIdentifier'), [right])
-  }
+  const leftIsDecimal = knownDecimalNodes.has(left);
+  const rightIsDecimal = knownDecimalNodes.has(right);
+  const typeChecks = { leftIsDecimal, rightIsDecimal };
 
-  const argumentIsIdentifier = path.get("left").isIdentifier() || path.get("right").isIdentifier();
-  const leftIsDecimal = knownDecimalNodes.has(left) || argumentIsIdentifier;
-  const rightIsDecimal = knownDecimalNodes.has(right) || argumentIsIdentifier;
-
-  if (earlyReturn([!leftIsDecimal && !rightIsDecimal])) {
+  if (
+    earlyReturn([
+      !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
+    ])
+  ) {
     return;
   }
 
-  passesGeneralChecks(path, knownDecimalNodes, opToName);
+  passesGeneralChecks(path, includedOps, typeChecks);
 
   /* Add function(s) for implementation-specific checks here */
 
   const member = t.memberExpression(left, t.identifier(opToName[operator]));
 
-  const newNode = t.callExpression(member, [right]);
+  const newNode = includesIdentifierArgument
+    ? t.callExpression(t.identifier("binaryExpressionHandler"), [
+        left,
+        right,
+        t.StringLiteral(operator),
+      ])
+    : t.callExpression(member, [right]);
 
   knownDecimalNodes.add(newNode);
 
