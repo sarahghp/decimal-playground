@@ -19,7 +19,12 @@ const binaryExpressionHandler = (left, right, op) => {
   const rightIsDecimal = isDecInstance(right);
 
   if (leftIsDecimal !== rightIsDecimal) {
-    throw new TypeError("Mixed numeric types are not allowed.");
+    const leftValue = leftIsDecimal ? `${left}m` : left;
+    const rightValue = rightIsDecimal ? `${right}m` : right;
+
+    throw new TypeError(
+      `Mixed numeric types are not allowed. In ${op} called with ${leftValue}, ${rightValue}`
+    );
   }
 
   // Now that we've gotten rid of mixed items, we know that whatever is
