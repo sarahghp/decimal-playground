@@ -10,6 +10,10 @@ const binaryEvaluators = {
   "*": "mul",
   "-": "sub",
   "/": "div",
+  ">": "gt",
+  ">=": "gte",
+  "<": "lt",
+  "<=": "lte",
 };
 
 const binaryExpressionHandler = (left, right, op) => {
@@ -29,7 +33,6 @@ const binaryExpressionHandler = (left, right, op) => {
 
   // Now that we've gotten rid of mixed items, we know that whatever is
   // true of left is also true of right
-
   if (leftIsDecimal) {
     return left[binaryEvaluators[op]](right);
   }
