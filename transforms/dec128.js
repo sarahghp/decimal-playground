@@ -1,4 +1,5 @@
 import {
+  checkAndThrowForDecimal,
   createIdentifierNode,
   createLiteralsNode,
   earlyReturn,
@@ -112,8 +113,9 @@ export default function (babel) {
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       LogicalExpression: {
-        exit: handleLogicalExpression(t, knownDecimalNodes)
+        exit: handleLogicalExpression(t, knownDecimalNodes),
       },
+      NewExpression: checkAndThrowForDecimal,
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
       },
