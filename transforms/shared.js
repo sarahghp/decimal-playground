@@ -55,6 +55,21 @@ const handleMemberCall = (path, knownDecimalNodes) => {
   }
 };
 
+const sameTypeCheck = (path, knownDecimalNodes, t) => {
+  const { left, right } = path.node;
+
+  const leftIsPossiblyDecimal =
+    knownDecimalNodes.has(left) || isDefiniedIdentifier(t, left);
+  const rightIsPossiblyDecimal =
+    knownDecimalNodes.has(right) || isDefiniedIdentifier(t, right);
+
+  if (leftIsPossiblyDecimal !== rightIsPossiblyDecimal) {
+    throw path.buildCodeFrameError(
+      new TypeError("Mixed numeric types are not allowed.")
+    );
+  }
+};
+
 export const isDefiniedIdentifier = (t, arg) =>
   t.isIdentifier(arg) && !t.isIdentifier(arg, { name: "undefined" });
 
@@ -193,21 +208,6 @@ export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
 
 export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
-};
-
-export const sameTypeCheck = (path, knownDecimalNodes, t) => {
-  const { left, right } = path.node;
-
-  const leftIsPossiblyDecimal =
-    knownDecimalNodes.has(left) || isDefiniedIdentifier(t, left);
-  const rightIsPossiblyDecimal =
-    knownDecimalNodes.has(right) || isDefiniedIdentifier(t, right);
-
-  if (leftIsPossiblyDecimal !== rightIsPossiblyDecimal) {
-    throw path.buildCodeFrameError(
-      new TypeError("Mixed numeric types are not allowed.")
-    );
-  }
 };
 
 export const includedOpCheck = (operator, includedOps) => {

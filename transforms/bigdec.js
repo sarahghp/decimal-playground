@@ -22,15 +22,16 @@ const opToName = { ...sharedSingleOps, ...sharedMixedOps };
 const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   let { left, right, operator } = path.node;
 
-  const includesIdentifierArgument =
-    isDefiniedIdentifier(t, left) || isDefiniedIdentifier(t, right);
+  const isIdentifier = (arg) => isDefiniedIdentifier(t, arg);
+  const includesIdentifierArgument = [left, right].some(isIdentifier);
+  const bothArgumentsAreIdentifiers = [left, right].every(isIdentifier);
 
   const leftIsDecimal = knownDecimalNodes.has(left);
   const rightIsDecimal = knownDecimalNodes.has(right);
 
   if (
     earlyReturn([
-      !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
+      !leftIsDecimal && !rightIsDecimal && !bothArgumentsAreIdentifiers,
     ])
   ) {
     return;
