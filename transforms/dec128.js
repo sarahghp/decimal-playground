@@ -4,11 +4,13 @@ import {
   earlyReturn,
   handleCallExpression,
   handleMixedOps,
+  handleSpecialCaseOps,
   handleSingleTypeOps,
   isDefiniedIdentifier,
   replaceWithDecimal,
   sharedMixedOps,
   sharedSingleOps,
+  specialCaseOps,
 } from "./shared.js";
 
 const implementationIdentifier = "Decimal128";
@@ -33,6 +35,13 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
       !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
     ])
   ) {
+    return;
+  }
+
+  const isSpecialCaseOp = Reflect.has(specialCaseOps, operator);
+
+  if (isSpecialCaseOp) {
+    handleSpecialCaseOps(t, knownDecimalNodes, path, specialCaseOps);
     return;
   }
 

@@ -5,10 +5,12 @@ import {
   handleCallExpression,
   handleMixedOps,
   handleSingleTypeOps,
+  handleSpecialCaseOps,
   isDefiniedIdentifier,
   replaceWithDecimal,
   sharedMixedOps,
   sharedSingleOps,
+  specialCaseOps,
 } from "./shared.js";
 
 const implementationIdentifier = "Big";
@@ -29,6 +31,14 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
       !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
     ])
   ) {
+    return;
+  }
+
+  // if is specialCase, call the special case ops
+  const isSpecialCaseOp = Reflect.has(specialCaseOps, operator);
+
+  if (isSpecialCaseOp) {
+    handleSpecialCaseOps(t, knownDecimalNodes, path, specialCaseOps);
     return;
   }
 

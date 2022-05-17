@@ -121,6 +121,22 @@ export const handleSingleTypeOps = (t, knownDecimalNodes, path, opToName) => {
   return { left, right, operator, opToName };
 };
 
+export const handleSpecialCaseOps = (t, knownDecimalNodes, path, opToName) => {
+  // create call to Decimal[opToName[operator]]
+  let { left, right, operator } = path.node;
+
+  const member = t.memberExpression(
+    t.identifier(builtInLibraryName),
+    t.identifier(opToName[operator])
+  );
+  const newNode = t.callExpression(member, [left, right]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+};
+
 export const handleCallExpression =
   (t, knownDecimalNodes, implementationIdentifier) => (path) => {
     const callee = path.get("callee");
@@ -187,4 +203,8 @@ export const sharedMixedOps = {
   "<": "lt",
   "<=": "lte",
   "==": "eq",
+};
+
+export const specialCaseOps = {
+  "===": "tripleEquals",
 };
