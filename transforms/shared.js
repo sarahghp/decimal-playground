@@ -186,4 +186,5 @@ export const sharedMixedOps = {
   ">=": "gte",
   "<": "lt",
   "<=": "lte",
+  "==": "eq",
 };
