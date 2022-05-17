@@ -76,6 +76,16 @@ export const createIdentifierNode = (
   path.skip();
 };
 
+export const checkAndThrowForDecimal = (path) => {
+  const callee = path.get("callee");
+
+  if (callee.isIdentifier({ name: builtInLibraryName })) {
+    throw path.buildCodeFrameError(
+      new TypeError(`Decimal is not a constructor.`)
+    );
+  }
+};
+
 export const createLiteralsNode = (
   t,
   knownDecimalNodes,
@@ -168,8 +178,8 @@ export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
     // We know this is a call expression because the DecimalLiteral is transformed
     // before this is encountered
     const value = arg.arguments[0].value;
-    return value === '0' ? t.numericLiteral(0) : arg;
-  }
+    return value === "0" ? t.numericLiteral(0) : arg;
+  };
 
   left = knownDecimalNodes.has(left) ? checkAndReplaceZero(left) : left;
   right = knownDecimalNodes.has(right) ? checkAndReplaceZero(right) : right;
@@ -179,8 +189,7 @@ export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
 
   path.replaceWith(newNode);
   path.skip();
-
-}
+};
 
 export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
