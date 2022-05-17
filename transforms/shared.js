@@ -27,6 +27,12 @@ const coerceConstructorArg = (path, t) => {
     return t.StringLiteral(first.node.value);
   }
 
+  if (first.isIdentifier()) {
+    return t.callExpression(t.identifier("wrappedConstructorIdentifier"), [
+      first.node,
+    ]);
+  }
+
   return first.node;
 };
 
@@ -102,17 +108,21 @@ export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
 
-export const passesGeneralChecks = (path, knownDecimalNodes, opToName) => {
-  const includedOps = new Map(Object.entries(opToName));
+export const passesGeneralChecks = (
+  path,
+  includedOps,
+  { leftIsDecimal, rightIsDecimal }
+) => {
+  const { operator } = path.node;
 
-  const { left, right, operator } = path.node;
+  const leftIsPossiblyDecimal =
+    leftIsDecimal || path.get("left").isIdentifier();
+  const rightIsPossiblyDecimal =
+    rightIsDecimal || path.get("right").isIdentifier();
 
-  const leftIsDecimal = knownDecimalNodes.has(left);
-  const rightIsDecimal = knownDecimalNodes.has(right);
-
-  if (leftIsDecimal !== rightIsDecimal) {
+  if (leftIsPossiblyDecimal !== rightIsPossiblyDecimal) {
     throw path.buildCodeFrameError(
-      new SyntaxError("Mixed numeric types are not allowed.")
+      new TypeError("Mixed numeric types are not allowed.")
     );
   }
 
