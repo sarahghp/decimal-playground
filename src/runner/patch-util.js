@@ -3,7 +3,7 @@ import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
     const [arg] = argsList;
-    if (arg instanceof Decimal) {
+    if (arg instanceof Decimal128) {
       return substituteFns[DECIMAL_128](...argsList);
     }
 
@@ -35,7 +35,7 @@ const createNaryHandler = (substituteFns, refiner = () => true) => ({
 
     // We assume that the args are not mixed decimal versions
     // because if they are other things have gone very badly
-    if (argsList[0] instanceof Decimal) {
+    if (argsList[0] instanceof Decimal128) {
       return substituteFns[DECIMAL_128](...argsList);
     }
 
