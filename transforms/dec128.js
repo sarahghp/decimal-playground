@@ -3,6 +3,7 @@ import {
   createLiteralsNode,
   earlyReturn,
   handleCallExpression,
+  handleLogicalExpression,
   handleMixedOps,
   handleSpecialCaseOps,
   handleSingleTypeOps,
@@ -110,6 +111,9 @@ export default function (babel) {
         ),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
+      LogicalExpression: {
+        exit: handleLogicalExpression(t, knownDecimalNodes)
+      },
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
       },

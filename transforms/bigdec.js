@@ -3,6 +3,7 @@ import {
   createLiteralsNode,
   earlyReturn,
   handleCallExpression,
+  handleLogicalExpression,
   handleMixedOps,
   handleSingleTypeOps,
   handleSpecialCaseOps,
@@ -86,6 +87,7 @@ const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   path.skip();
 };
 
+
 export default function (babel) {
   const { types: t } = babel;
   const knownDecimalNodes = new WeakSet();
@@ -107,6 +109,9 @@ export default function (babel) {
         ),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
+      LogicalExpression: {
+        exit: handleLogicalExpression(t, knownDecimalNodes)
+      },
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
       },

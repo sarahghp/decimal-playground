@@ -157,6 +157,31 @@ export const handleCallExpression =
     }
   };
 
+export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
+  let { left, right, operator } = path.node;
+
+  if (!knownDecimalNodes.has(left) && !knownDecimalNodes.has(right)) {
+    return;
+  }
+
+  const checkAndReplaceZero = (arg) => {
+    // We know this is a call expression because the DecimalLiteral is transformed
+    // before this is encountered
+    const value = arg.arguments[0].value;
+    return value === '0' ? t.numericLiteral(0) : arg;
+  }
+
+  left = knownDecimalNodes.has(left) ? checkAndReplaceZero(left) : left;
+  right = knownDecimalNodes.has(right) ? checkAndReplaceZero(right) : right;
+
+  const newNode = t.logicalExpression(operator, left, right);
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+
+}
+
 export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
