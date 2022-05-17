@@ -1,28 +1,35 @@
 import {
+  createIdentifierNode,
+  createLiteralsNode,
   earlyReturn,
   handleCallExpression,
-  passesGeneralChecks,
+  handleLogicalExpression,
+  handleMixedOps,
+  handleSpecialCaseOps,
+  handleSingleTypeOps,
+  isDefiniedIdentifier,
   replaceWithDecimal,
-  sharedOpts,
+  sharedMixedOps,
+  sharedSingleOps,
+  specialCaseOps,
 } from "./shared.js";
 
 const implementationIdentifier = "Decimal128";
 
 const opToName = {
-  ...sharedOpts,
+  ...sharedMixedOps,
+  ...sharedSingleOps,
   "/": "div",
 };
-const includedOps = new Map(Object.entries(opToName));
 
-const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
+const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   let { left, right, operator } = path.node;
 
   const includesIdentifierArgument =
-    path.get("left").isIdentifier() || path.get("right").isIdentifier();
+    isDefiniedIdentifier(t, left) || isDefiniedIdentifier(t, right);
 
   const leftIsDecimal = knownDecimalNodes.has(left);
   const rightIsDecimal = knownDecimalNodes.has(right);
-  const typeChecks = { leftIsDecimal, rightIsDecimal };
 
   if (
     earlyReturn([
@@ -32,24 +39,31 @@ const replaceWithDecimalExpression = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
-  passesGeneralChecks(path, includedOps, typeChecks);
+  const isSpecialCaseOp = Reflect.has(specialCaseOps, operator);
 
-  /* Add function(s) for implementation-specific checks here */
+  if (isSpecialCaseOp) {
+    handleSpecialCaseOps(t, knownDecimalNodes, path, specialCaseOps);
+    return;
+  }
 
-  const member = t.memberExpression(left, t.identifier(opToName[operator]));
+  const isMixedTypesOp = Reflect.has(sharedMixedOps, operator);
 
-  const newNode = includesIdentifierArgument
-    ? t.callExpression(t.identifier("binaryExpressionHandler"), [
-        left,
-        right,
-        t.StringLiteral(operator),
-      ])
-    : t.callExpression(member, [right]);
+  const transformations = isMixedTypesOp
+    ? handleMixedOps(
+        t,
+        knownDecimalNodes,
+        path,
+        opToName,
+        implementationIdentifier
+      )
+    : handleSingleTypeOps(t, knownDecimalNodes, path, opToName);
 
-  knownDecimalNodes.add(newNode);
+  if (includesIdentifierArgument) {
+    createIdentifierNode(t, knownDecimalNodes, path, transformations);
+    return;
+  }
 
-  path.replaceWith(newNode);
-  path.skip();
+  createLiteralsNode(t, knownDecimalNodes, path, transformations);
 };
 
 const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
@@ -87,7 +101,7 @@ export default function (babel) {
     },
     visitor: {
       BinaryExpression: {
-        exit: replaceWithDecimalExpression(t, knownDecimalNodes),
+        exit: replaceWithBinaryDecimalExpression(t, knownDecimalNodes),
       },
       CallExpression: {
         exit: handleCallExpression(
@@ -97,6 +111,9 @@ export default function (babel) {
         ),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
+      LogicalExpression: {
+        exit: handleLogicalExpression(t, knownDecimalNodes)
+      },
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),
       },
