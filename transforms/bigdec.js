@@ -13,6 +13,7 @@ import {
   sharedMixedOps,
   sharedSingleOps,
   specialCaseOps,
+  unaryDecimalFns,
 } from "./shared.js";
 
 const implementationIdentifier = "Big";
@@ -72,21 +73,14 @@ const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
-  if (operator !== "-") {
-    throw path.buildCodeFrameError(
-      new SyntaxError(`Unary ${operator} is not currently supported.`)
-    );
+  if (Reflect.has(unaryDecimalFns, operator)) {
+    unaryDecimalFns[operator](t, knownDecimalNodes, path, argument);
+    return;
   }
 
-  /* Add function(s) for implementation-specific checks here */
-
-  const member = t.memberExpression(argument, t.identifier("mul"));
-  const newNode = t.callExpression(member, [t.numericLiteral(-1)]);
-
-  knownDecimalNodes.add(newNode);
-
-  path.replaceWith(newNode);
-  path.skip();
+  throw path.buildCodeFrameError(
+    new SyntaxError(`Unary ${operator} is not currently supported.`)
+  );
 };
 
 export default function (babel) {

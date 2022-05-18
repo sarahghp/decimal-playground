@@ -7,12 +7,37 @@ import { coerceConstructorArg, coerceNonDecimalArg } from "./coercions.js";
 
 const builtInLibraryName = "Decimal";
 
+const decimalTypeof = (t, knownDecimalNodes, path, argument) => {
+  if (!(knownDecimalNodes.has(argument) || t.isIdentifier(argument))) {
+    return;
+  }
+
+  const member = t.memberExpression(
+    t.identifier(builtInLibraryName),
+    t.identifier("typeof")
+  );
+
+  const newNode = t.callExpression(member, [argument]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+};
+
 const handleIdentifierCall = (
   path,
   implementationIdentifier,
   knownDecimalNodes,
   t
 ) => {
+  // This handles the case where uers have @babel/plugin-transform-typeof-symbol enabled
+  // which includes everyone using PresentEnv
+  if (path.get("callee").isIdentifier({ name: "_typeof" })) {
+    decimalTypeof(t, knownDecimalNodes, path, path.node.arguments[0]);
+    return;
+  }
+
   if (path.get("callee").isIdentifier({ name: implementationIdentifier })) {
     knownDecimalNodes.add(path.node);
     return;
@@ -68,6 +93,16 @@ const sameTypeCheck = (path, knownDecimalNodes, t) => {
       new TypeError("Mixed numeric types are not allowed.")
     );
   }
+};
+
+const unaryNegate = (t, knownDecimalNodes, path, argument) => {
+  const member = t.memberExpression(argument, t.identifier("mul"));
+  const newNode = t.callExpression(member, [t.numericLiteral(-1)]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
 };
 
 export const isDefiniedIdentifier = (t, arg) =>
@@ -241,4 +276,9 @@ export const sharedMixedOps = {
 
 export const specialCaseOps = {
   "===": "tripleEquals",
+};
+
+export const unaryDecimalFns = {
+  typeof: decimalTypeof,
+  "-": unaryNegate,
 };
