@@ -1,6 +1,7 @@
 /* global Big, Decimal */
 
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
+import { typeCheckAndCallEq, typeofCheck } from "./patch-library.js"
 import { checkAndInitMathHandlers } from "./patch-math.js";
 import { roundImpl } from "./patch-round.js";
 import {
@@ -10,23 +11,6 @@ import {
   throwUnimplemented,
 } from "./patch-util.js";
 
-const typeCheckAndCallEq = (left, right) => {
-  const allDecimals = [left, right].every(
-    (arg) => arg instanceof Decimal128 || arg instanceof Big
-  );
-
-  if (!allDecimals) {
-    return false;
-  }
-
-  return left.eq(right);
-};
-
-const tripleEqualsImpl = {
-  [BIG_DECIMAL]: typeCheckAndCallEq,
-  [DECIMAL_128]: typeCheckAndCallEq,
-};
-
 checkAndInitMathHandlers(createUnaryHandler, createNaryHandler);
 
 Decimal.round = new Proxy(
@@ -34,4 +18,5 @@ Decimal.round = new Proxy(
   createUnaryHandler(roundImpl)
 );
 
-Decimal.tripleEquals = new Proxy(() => {}, createNaryHandler(tripleEqualsImpl));
+Decimal.tripleEquals = typeCheckAndCallEq;
+Decimal.typeof = typeofCheck;

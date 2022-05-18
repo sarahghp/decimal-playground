@@ -13,6 +13,7 @@ import {
   sharedMixedOps,
   sharedSingleOps,
   specialCaseOps,
+  unaryDecimalFns,
 } from "./shared.js";
 
 const implementationIdentifier = "Decimal128";
@@ -26,15 +27,16 @@ const opToName = {
 const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   let { left, right, operator } = path.node;
 
-  const includesIdentifierArgument =
-    isDefiniedIdentifier(t, left) || isDefiniedIdentifier(t, right);
+  const isIdentifier = (arg) => isDefiniedIdentifier(t, arg);
+  const includesIdentifierArgument = [left, right].some(isIdentifier);
+  const bothArgumentsAreIdentifiers = [left, right].every(isIdentifier);
 
   const leftIsDecimal = knownDecimalNodes.has(left);
   const rightIsDecimal = knownDecimalNodes.has(right);
 
   if (
     earlyReturn([
-      !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
+      !leftIsDecimal && !rightIsDecimal && !bothArgumentsAreIdentifiers,
     ])
   ) {
     return;
@@ -74,21 +76,14 @@ const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
-  if (operator !== "-") {
-    throw path.buildCodeFrameError(
-      new SyntaxError(`Unary ${operator} is not currently supported.`)
-    );
+  if (Reflect.has(unaryDecimalFns, operator)) {
+    unaryDecimalFns[operator](t, knownDecimalNodes, path, argument);
+    return;
   }
 
-  /* Add function(s) for implementation-specific checks here */
-
-  const member = t.memberExpression(argument, t.identifier("neg"));
-  const newNode = t.callExpression(member, []);
-
-  knownDecimalNodes.add(newNode);
-
-  path.replaceWith(newNode);
-  path.skip();
+  throw path.buildCodeFrameError(
+    new SyntaxError(`Unary ${operator} is not currently supported.`)
+  );
 };
 
 export default function (babel) {

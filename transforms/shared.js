@@ -7,12 +7,37 @@ import { coerceConstructorArg, coerceNonDecimalArg } from "./coercions.js";
 
 const builtInLibraryName = "Decimal";
 
+const decimalTypeof = (t, knownDecimalNodes, path, argument) => {
+  if (!(knownDecimalNodes.has(argument) || t.isIdentifier(argument))) {
+    return;
+  }
+
+  const member = t.memberExpression(
+    t.identifier(builtInLibraryName),
+    t.identifier("typeof")
+  );
+
+  const newNode = t.callExpression(member, [argument]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+};
+
 const handleIdentifierCall = (
   path,
   implementationIdentifier,
   knownDecimalNodes,
   t
 ) => {
+  // This handles the case where uers have @babel/plugin-transform-typeof-symbol enabled
+  // which includes everyone using PresentEnv
+  if (path.get("callee").isIdentifier({ name: "_typeof" })) {
+    decimalTypeof(t, knownDecimalNodes, path, path.node.arguments[0]);
+    return;
+  }
+
   if (path.get("callee").isIdentifier({ name: implementationIdentifier })) {
     knownDecimalNodes.add(path.node);
     return;
@@ -53,6 +78,31 @@ const handleMemberCall = (path, knownDecimalNodes) => {
   ) {
     knownDecimalNodes.add(path.node);
   }
+};
+
+const sameTypeCheck = (path, knownDecimalNodes, t) => {
+  const { left, right } = path.node;
+
+  const leftIsPossiblyDecimal =
+    knownDecimalNodes.has(left) || isDefiniedIdentifier(t, left);
+  const rightIsPossiblyDecimal =
+    knownDecimalNodes.has(right) || isDefiniedIdentifier(t, right);
+
+  if (leftIsPossiblyDecimal !== rightIsPossiblyDecimal) {
+    throw path.buildCodeFrameError(
+      new TypeError("Mixed numeric types are not allowed.")
+    );
+  }
+};
+
+const unaryNegate = (t, knownDecimalNodes, path, argument) => {
+  const member = t.memberExpression(argument, t.identifier("mul"));
+  const newNode = t.callExpression(member, [t.numericLiteral(-1)]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
 };
 
 export const isDefiniedIdentifier = (t, arg) =>
@@ -195,21 +245,6 @@ export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
 
-export const sameTypeCheck = (path, knownDecimalNodes, t) => {
-  const { left, right } = path.node;
-
-  const leftIsPossiblyDecimal =
-    knownDecimalNodes.has(left) || isDefiniedIdentifier(t, left);
-  const rightIsPossiblyDecimal =
-    knownDecimalNodes.has(right) || isDefiniedIdentifier(t, right);
-
-  if (leftIsPossiblyDecimal !== rightIsPossiblyDecimal) {
-    throw path.buildCodeFrameError(
-      new TypeError("Mixed numeric types are not allowed.")
-    );
-  }
-};
-
 export const includedOpCheck = (operator, includedOps) => {
   if (!Reflect.has(includedOps, operator)) {
     throw path.buildCodeFrameError(
@@ -241,4 +276,9 @@ export const sharedMixedOps = {
 
 export const specialCaseOps = {
   "===": "tripleEquals",
+};
+
+export const unaryDecimalFns = {
+  typeof: decimalTypeof,
+  "-": unaryNegate,
 };
