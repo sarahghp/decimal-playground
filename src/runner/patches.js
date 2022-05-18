@@ -1,7 +1,12 @@
 /* global Big, Decimal */
 
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
-import { typeCheckAndCallEq, typeofCheck } from "./patch-library.js"
+import {
+  invertEquals,
+  invertTypeCheckAndCallEq,
+  typeCheckAndCallEq,
+  typeofCheck,
+} from "./patch-library.js";
 import { checkAndInitMathHandlers } from "./patch-math.js";
 import { roundImpl } from "./patch-round.js";
 import {
@@ -20,3 +25,5 @@ Decimal.round = new Proxy(
 
 Decimal.tripleEquals = typeCheckAndCallEq;
 Decimal.typeof = typeofCheck;
+Decimal.notEquals = invertEquals;
+Decimal.notTripleEquals = invertTypeCheckAndCallEq;
