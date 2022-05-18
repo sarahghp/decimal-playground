@@ -276,6 +276,8 @@ export const sharedMixedOps = {
 
 export const specialCaseOps = {
   "===": "tripleEquals",
+  "!=": "notEquals",
+  "!==": "notTripleEquals",
 };
 
 export const unaryDecimalFns = {
