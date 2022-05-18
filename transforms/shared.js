@@ -160,7 +160,7 @@ export const handleMixedOps = (
 ) => {
   let { left, right, operator } = path.node;
 
-  includedOpCheck(operator, opToName);
+  includedOpCheck(path, operator, opToName);
 
   left = knownDecimalNodes.has(left)
     ? left
@@ -176,7 +176,7 @@ export const handleSingleTypeOps = (t, knownDecimalNodes, path, opToName) => {
   let { left, right, operator } = path.node;
 
   sameTypeCheck(path, knownDecimalNodes, t);
-  includedOpCheck(operator, opToName);
+  includedOpCheck(path, operator, opToName);
 
   return { left, right, operator, opToName };
 };
@@ -245,7 +245,7 @@ export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };
 
-export const includedOpCheck = (operator, includedOps) => {
+export const includedOpCheck = (path, operator, includedOps) => {
   if (!Reflect.has(includedOps, operator)) {
     throw path.buildCodeFrameError(
       new SyntaxError(`${operator} is not currently supported.`)
