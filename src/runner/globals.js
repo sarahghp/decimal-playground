@@ -14,6 +14,7 @@ const binaryEvaluators = {
   ">=": "gte",
   "<": "lt",
   "<=": "lte",
+  "==": "eq",
 };
 
 const binaryExpressionHandler = (left, right, op, message) => {

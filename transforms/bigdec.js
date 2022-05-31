@@ -38,7 +38,6 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
-  // if is specialCase, call the special case ops
   const isSpecialCaseOp = Reflect.has(specialCaseOps, operator);
 
   if (isSpecialCaseOp) {

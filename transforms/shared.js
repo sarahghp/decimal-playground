@@ -115,7 +115,7 @@ export const createIdentifierNode = (
   { left, right, operator }
 ) => {
   const { message } = path.buildCodeFrameError(
-    "Mixed numeric types are not allowed."
+    "TypeError: Mixed numeric types are not allowed."
   );
 
   const newNode = t.callExpression(t.identifier("binaryExpressionHandler"), [
