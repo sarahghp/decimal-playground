@@ -11,7 +11,7 @@ const editorOptions = {
 const CLEAR = "clear";
 const ADD = "add";
 
-const methods = ["log", "warn", "error", "info", "debug", "command", "result"];
+const methods = ["log", "warn", "info", "debug", "command", "result"];
 const emptyLogsList = [];
 const logsReducer = (state, action) => {
   switch (action.type) {
@@ -24,17 +24,35 @@ const logsReducer = (state, action) => {
   }
 };
 
+const errorsReducer = (state, action) => {
+  switch (action.type) {
+    case CLEAR:
+      return [];
+    case ADD:
+      return [...state, { level: action.level, data: action.data }];
+    default:
+      return state;
+  }
+};
+
 const Results = ({ content, error, order }) => {
   const [logsList, updateLogs] = useReducer(logsReducer, emptyLogsList);
+  const [errsList, updateErrs] = useReducer(logsReducer, [error]);
   const [iframe, updateIframe] = useState();
   const iframeContainerRef = useRef();
+
+  const consoleWithError = {
+    error(...args) {
+      updateErrs({ type: ADD, level: "error", data: args });
+    },
+  };
 
   const fakeConsole = methods.reduce((obj, method) => {
     obj[method] = (...args) => {
       updateLogs({ type: ADD, level: method, data: args });
     };
     return obj;
-  }, {});
+  }, consoleWithError);
 
   const run = () => {
     if (!iframe) {
@@ -50,6 +68,7 @@ const Results = ({ content, error, order }) => {
       // (see runner/index.js)
       setTimeout(() => {
         updateLogs({ type: CLEAR });
+        updateErrs({ type: CLEAR });
         iframe.onload = () => iframe.contentWindow.run(content, fakeConsole);
         iframe.contentWindow.location.reload();
       });
@@ -63,7 +82,7 @@ const Results = ({ content, error, order }) => {
       <Console
         orderClass={`${order.CONSOLE || ""}`}
         logsList={logsList}
-        error={error}
+        errorList={errsList}
       />
       <div
         className={`domPlayground ${order.DOM_PLAYGROUND || ""}`}

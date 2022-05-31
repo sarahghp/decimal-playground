@@ -32,7 +32,7 @@ const handleIdentifierCall = (
   t
 ) => {
   // This handles the case where uers have @babel/plugin-transform-typeof-symbol enabled
-  // which includes everyone using PresentEnv
+  // which includes everyone using PresetEnv
   if (path.get("callee").isIdentifier({ name: "_typeof" })) {
     decimalTypeof(t, knownDecimalNodes, path, path.node.arguments[0]);
     return;
@@ -114,10 +114,15 @@ export const createIdentifierNode = (
   path,
   { left, right, operator }
 ) => {
+  const { message } = path.buildCodeFrameError(
+    "Mixed numeric types are not allowed."
+  );
+
   const newNode = t.callExpression(t.identifier("binaryExpressionHandler"), [
     left,
     right,
     t.StringLiteral(operator),
+    t.StringLiteral(message),
   ]);
 
   knownDecimalNodes.add(newNode);
