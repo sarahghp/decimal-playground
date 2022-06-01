@@ -37,9 +37,9 @@ const binaryExpressionHandler = (left, right, op, message) => {
   return eval(`${left} ${op} ${right}`);
 };
 
-const wrappedConstructorIdentifier = (a) => {
+const wrappedConstructorIdentifier = (a, error) => {
   if (a === null || a === undefined) {
-    throw new TypeError(`Can't convert null or undefined to Decimal.`);
+    throw new TypeError(error);
   }
 
   if (typeof a === "boolean") {

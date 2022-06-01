@@ -2,14 +2,16 @@ export const coerceConstructorArg = (path, t) => {
   const args = path.get("arguments");
   const [first] = args;
 
+  const error = path.buildCodeFrameError(
+    new TypeError(`Can't convert null or undefined to Decimal.`)
+  );
+
   if (
     !args.length ||
     first.isNullLiteral() ||
     first.isIdentifier({ name: "undefined" })
   ) {
-    throw path.buildCodeFrameError(
-      new TypeError(`Can't convert null or undefined to Decimal.`)
-    );
+    throw error;
   }
 
   if (first.isBooleanLiteral()) {
@@ -24,6 +26,7 @@ export const coerceConstructorArg = (path, t) => {
     // Put error message here
     return t.callExpression(t.identifier("wrappedConstructorIdentifier"), [
       first.node,
+      t.StringLiteral(error.message),
     ]);
   }
 
