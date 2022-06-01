@@ -10,10 +10,10 @@ import {
   handleSpecialCaseOps,
   isDefiniedIdentifier,
   replaceWithDecimal,
+  replaceWithUnaryDecimalExpression,
   sharedMixedOps,
   sharedSingleOps,
   specialCaseOps,
-  unaryDecimalFns,
 } from "./shared.js";
 
 const implementationIdentifier = "Big";
@@ -64,23 +64,6 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   }
 
   createLiteralsNode(t, knownDecimalNodes, path, transformations);
-};
-
-const replaceWithUnaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
-  const { argument, operator } = path.node;
-
-  if (!knownDecimalNodes.has(argument)) {
-    return;
-  }
-
-  if (Reflect.has(unaryDecimalFns, operator)) {
-    unaryDecimalFns[operator](t, knownDecimalNodes, path, argument);
-    return;
-  }
-
-  throw path.buildCodeFrameError(
-    new SyntaxError(`Unary ${operator} is not currently supported.`)
-  );
 };
 
 export default function (babel) {

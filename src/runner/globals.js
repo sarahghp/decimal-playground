@@ -15,10 +15,9 @@ const binaryEvaluators = {
   "<": "lt",
   "<=": "lte",
 };
+const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 
 const binaryExpressionHandler = (left, right, op, message) => {
-  const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
-
   const leftIsDecimal = isDecInstance(left);
   const rightIsDecimal = isDecInstance(right);
 
@@ -27,8 +26,6 @@ const binaryExpressionHandler = (left, right, op, message) => {
     const rightValue = rightIsDecimal ? `${right}m` : right;
 
     throw new TypeError(message);
-
-    //console.error(message);
   }
 
   // Now that we've gotten rid of mixed items, we know that whatever is
@@ -54,4 +51,22 @@ const wrappedConstructorIdentifier = (a) => {
   }
 
   return a;
+};
+
+const unaryEvaluators = {
+  "-"(argument) {
+    return argument.mul(-1);
+  },
+};
+
+const wrappedUnaryNegate = (argument, operator, error) => {
+  if (!isDecInstance(argument)) {
+    return eval(`${operator}${argument}`);
+  }
+
+  if (!Reflect.has(unaryEvaluators, operator)) {
+    throw new SyntaxError(error);
+  }
+
+  return unaryEvaluators[operator](argument);
 };

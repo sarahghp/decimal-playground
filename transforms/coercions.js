@@ -21,6 +21,7 @@ export const coerceConstructorArg = (path, t) => {
   }
 
   if (first.isIdentifier()) {
+    // Put error message here
     return t.callExpression(t.identifier("wrappedConstructorIdentifier"), [
       first.node,
     ]);
