@@ -8,6 +8,6 @@ globalThis.run = function (source, console) {
   const dataUri = "data:text/javascript;base64," + encodedJs;
   return import(/*webpackIgnore: true*/ dataUri).catch((err) => {
     console.error(err.message);
-    console.error(err);
+    console.error(err.stack);
   });
 };

@@ -15,10 +15,9 @@ const binaryEvaluators = {
   "<": "lt",
   "<=": "lte",
 };
+const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 
-const binaryExpressionHandler = (left, right, op) => {
-  const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
-
+const binaryExpressionHandler = (left, right, op, message) => {
   const leftIsDecimal = isDecInstance(left);
   const rightIsDecimal = isDecInstance(right);
 
@@ -26,9 +25,7 @@ const binaryExpressionHandler = (left, right, op) => {
     const leftValue = leftIsDecimal ? `${left}m` : left;
     const rightValue = rightIsDecimal ? `${right}m` : right;
 
-    throw new TypeError(
-      `Mixed numeric types are not allowed. In ${op} called with ${leftValue}, ${rightValue}`
-    );
+    throw new TypeError(message);
   }
 
   // Now that we've gotten rid of mixed items, we know that whatever is
@@ -40,9 +37,9 @@ const binaryExpressionHandler = (left, right, op) => {
   return eval(`${left} ${op} ${right}`);
 };
 
-const wrappedConstructorIdentifier = (a) => {
+const wrappedConstructorIdentifier = (a, error) => {
   if (a === null || a === undefined) {
-    throw new TypeError(`Can't convert null or undefined to Decimal.`);
+    throw new TypeError(error);
   }
 
   if (typeof a === "boolean") {
@@ -54,4 +51,22 @@ const wrappedConstructorIdentifier = (a) => {
   }
 
   return a;
+};
+
+const unaryEvaluators = {
+  "-"(argument) {
+    return argument.mul(-1);
+  },
+};
+
+const wrappedUnaryNegate = (argument, operator, error) => {
+  if (!isDecInstance(argument)) {
+    return eval(`${operator}${argument}`);
+  }
+
+  if (!Reflect.has(unaryEvaluators, operator)) {
+    throw new SyntaxError(error);
+  }
+
+  return unaryEvaluators[operator](argument);
 };
