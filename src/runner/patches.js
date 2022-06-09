@@ -7,16 +7,21 @@ import {
   typeCheckAndCallEq,
   typeofCheck,
 } from "./patch-library.js";
-import { checkAndInitMathHandlers } from "./patch-math.js";
+import {
+  checkAndInitMathHandlers,
+  initUnsupportedMathHandlers,
+} from "./patch-math.js";
 import { roundImpl } from "./patch-round.js";
 import {
   createUnaryHandler,
   createNaryHandler,
   decimalOnlyBaseFn,
+  throwsOnDecimalArg,
   throwUnimplemented,
 } from "./patch-util.js";
 
 checkAndInitMathHandlers(createUnaryHandler, createNaryHandler);
+initUnsupportedMathHandlers(throwsOnDecimalArg);
 
 Decimal.round = new Proxy(
   decimalOnlyBaseFn("Decimal.round"),

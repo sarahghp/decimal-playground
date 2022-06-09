@@ -35,9 +35,9 @@ const errorsReducer = (state, action) => {
   }
 };
 
-const Results = ({ content, error, order }) => {
+const Results = ({ content, transError, order }) => {
   const [logsList, updateLogs] = useReducer(logsReducer, emptyLogsList);
-  const [errsList, updateErrs] = useReducer(logsReducer, [error]);
+  const [errsList, updateErrs] = useReducer(errorsReducer, []);
   const [iframe, updateIframe] = useState();
   const iframeContainerRef = useRef();
 
@@ -82,7 +82,7 @@ const Results = ({ content, error, order }) => {
       <Console
         orderClass={`${order.CONSOLE || ""}`}
         logsList={logsList}
-        errorList={errsList}
+        errorList={[{ data: transError }, ...errsList]}
       />
       <div
         className={`domPlayground ${order.DOM_PLAYGROUND || ""}`}

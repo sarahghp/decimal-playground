@@ -56,7 +56,7 @@ const handleIdentifierCall = (
   }
 };
 
-const handleMemberCall = (path, knownDecimalNodes) => {
+const handleMemberCall = (t, path, knownDecimalNodes) => {
   const callee = path.get("callee");
   const object = callee.get("object");
   const property = callee.get("property");
@@ -64,20 +64,73 @@ const handleMemberCall = (path, knownDecimalNodes) => {
     ? property.node.name
     : property.node.value;
 
-  if (
-    object.isIdentifier({ name: "Math" }) &&
-    PATCHED_MATH_METHODS.includes(methodName)
-  ) {
+  const { arguments: args } = path.node;
+
+  const argIsDecimal = knownDecimalNodes.has(args[0]);
+  const argIsIdentifier = isDefiniedIdentifier(t, args[0]);
+
+  if (!argIsDecimal && !argIsIdentifier) {
+    return;
+  }
+
+  const isMathMethod = object.isIdentifier({ name: "Math" });
+  const isDecimalMethod = object.isIdentifier({ name: builtInLibraryName });
+
+  if (!isMathMethod && !isDecimalMethod) {
+    return;
+  }
+
+  const isSupportedMathMethod =
+    isMathMethod && PATCHED_MATH_METHODS.includes(methodName);
+  const isSupportedDecimalMethod =
+    isDecimalMethod && PATCHED_DECIMAL_METHODS.includes(methodName);
+
+  if (argIsDecimal && (isSupportedMathMethod || isSupportedDecimalMethod)) {
     knownDecimalNodes.add(path.node);
     return;
   }
 
-  if (
-    object.isIdentifier({ name: builtInLibraryName }) &&
-    PATCHED_DECIMAL_METHODS.includes(methodName)
-  ) {
-    knownDecimalNodes.add(path.node);
+  const error = path.buildCodeFrameError(
+    new TypeError(`This operation does not support Decimal values.`)
+  );
+
+  if (argIsIdentifier) {
+    const newNode = t.callExpression(callee.node, [
+      ...args,
+      t.StringLiteral(error.message),
+    ]);
+
+    knownDecimalNodes.add(newNode);
+    path.replaceWith(newNode);
+    path.skip();
+    return;
   }
+
+  throw error;
+};
+
+const handleUnaryExpressionWithIdentifier = (
+  t,
+  knownDecimalNodes,
+  path,
+  argument
+) => {
+  const { operator } = path.node;
+
+  const { message } = path.buildCodeFrameError(
+    new SyntaxError(`Unary ${operator} is not currently supported.`)
+  );
+
+  const newNode = t.callExpression(t.Identifier("wrappedUnaryNegate"), [
+    argument,
+    t.StringLiteral(operator),
+    t.StringLiteral(message),
+  ]);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
 };
 
 const sameTypeCheck = (path, knownDecimalNodes, t) => {
@@ -115,7 +168,7 @@ export const createIdentifierNode = (
   { left, right, operator }
 ) => {
   const { message } = path.buildCodeFrameError(
-    "TypeError: Mixed numeric types are not allowed."
+    new TypeError("Mixed numeric types are not allowed.")
   );
 
   const newNode = t.callExpression(t.identifier("binaryExpressionHandler"), [
@@ -217,7 +270,7 @@ export const handleCallExpression =
     }
 
     if (callee.isMemberExpression()) {
-      handleMemberCall(path, knownDecimalNodes);
+      handleMemberCall(t, path, knownDecimalNodes);
       return;
     }
   };
@@ -264,6 +317,30 @@ export const replaceWithDecimal = (t, implementationIdentifier) => (path) => {
 
   path.replaceWith(t.callExpression(callee, [num]));
 };
+
+export const replaceWithUnaryDecimalExpression =
+  (t, knownDecimalNodes) => (path) => {
+    const { argument, operator } = path.node;
+    const isIdentifier = isDefiniedIdentifier(t, argument);
+
+    if (!knownDecimalNodes.has(argument) && !isIdentifier) {
+      return;
+    }
+
+    if (isIdentifier) {
+      handleUnaryExpressionWithIdentifier(t, knownDecimalNodes, path, argument);
+      return;
+    }
+
+    if (Reflect.has(unaryDecimalFns, operator)) {
+      unaryDecimalFns[operator](t, knownDecimalNodes, path, argument);
+      return;
+    }
+
+    throw path.buildCodeFrameError(
+      new SyntaxError(`Unary ${operator} is not currently supported.`)
+    );
+  };
 
 export const sharedSingleOps = {
   "+": "add",
