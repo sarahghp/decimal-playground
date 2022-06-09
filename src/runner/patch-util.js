@@ -15,15 +15,14 @@ const createUnaryHandler = (substituteFns) => ({
   },
 });
 
+const containsDecimals = (argsList) =>
+  argsList.some((arg) => arg instanceof Decimal || arg instanceof Big);
+
 // A few functions can take mixed values (max, min, pow)
 // The refiner can be used to apply more careful rules about mixing
 const createNaryHandler = (substituteFns, refiner = () => true) => ({
   apply(target, thisArg, argsList) {
-    const containsDecimals = argsList.some(
-      (arg) => arg instanceof Decimal || arg instanceof Big
-    );
-
-    if (!containsDecimals) {
+    if (!containsDecimals(argsList)) {
       return target.apply(thisArg, argsList);
     }
 
@@ -49,15 +48,29 @@ const decimalOnlyBaseFn = (fnName) => () => {
   throw new TypeError(`${fnName} argument must be a Decimal`);
 };
 
-const throwUnimplemented = (what, implName) => {
+const throwUnimplemented = (what, implName, stack = "") => {
   throw new Error(
-    `${what} is not yet supported for ${implName}. Let us know if you need this! (https://github.com/tc39/proposal-decimal)`
+    `${what} is not yet supported for ${implName}. Let us know if you need this! (https://github.com/tc39/proposal-decimal)
+      ${stack}`
   );
 };
+
+const throwsOnDecimalArg = (methodName) => ({
+  apply(target, thisArg, argsList) {
+    if (containsDecimals(argsList)) {
+      const error = argsList.pop();
+
+      throwUnimplemented(methodName, "Decimal", error);
+    }
+
+    return target.apply(thisArg, argsList);
+  },
+});
 
 export {
   createUnaryHandler,
   createNaryHandler,
   decimalOnlyBaseFn,
+  throwsOnDecimalArg,
   throwUnimplemented,
 };

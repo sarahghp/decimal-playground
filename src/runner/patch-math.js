@@ -2,6 +2,7 @@ import {
   BIG_DECIMAL,
   DECIMAL_128,
   PATCHED_MATH_METHODS,
+  UNPATCHED_MATH_METHODS,
 } from "../constants.js";
 
 const absImpl = {
@@ -51,4 +52,10 @@ const checkAndInitMathHandlers = (createUnaryHandler, createNaryHandler) => {
   });
 };
 
-export { checkAndInitMathHandlers };
+const initUnsupportedMathHandlers = (handler) => {
+  UNPATCHED_MATH_METHODS.forEach((method) => {
+    Math[method] = new Proxy(Math[method], handler(`Math.${method}`));
+  });
+};
+
+export { checkAndInitMathHandlers, initUnsupportedMathHandlers };

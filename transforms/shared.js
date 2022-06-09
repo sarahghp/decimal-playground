@@ -56,7 +56,7 @@ const handleIdentifierCall = (
   }
 };
 
-const handleMemberCall = (path, knownDecimalNodes) => {
+const handleMemberCall = (t, path, knownDecimalNodes) => {
   const callee = path.get("callee");
   const object = callee.get("object");
   const property = callee.get("property");
@@ -64,23 +64,49 @@ const handleMemberCall = (path, knownDecimalNodes) => {
     ? property.node.name
     : property.node.value;
 
-  // should there be an error here if it is not patched & the argument
-  // is a Decimal? yes or else pass the error and throw it in the Proxy
-  if (
-    object.isIdentifier({ name: "Math" }) &&
-    PATCHED_MATH_METHODS.includes(methodName)
-  ) {
+  const { arguments: args } = path.node;
+
+  const argIsDecimal = knownDecimalNodes.has(args[0]);
+  const argIsIdentifier = isDefiniedIdentifier(t, args[0]);
+
+  if (!argIsDecimal && !argIsIdentifier) {
+    return;
+  }
+
+  const isMathMethod = object.isIdentifier({ name: "Math" });
+  const isDecimalMethod = object.isIdentifier({ name: builtInLibraryName });
+
+  if (!isMathMethod && !isDecimalMethod) {
+    return;
+  }
+
+  const isSupportedMathMethod =
+    isMathMethod && PATCHED_MATH_METHODS.includes(methodName);
+  const isSupportedDecimalMethod =
+    isDecimalMethod && PATCHED_DECIMAL_METHODS.includes(methodName);
+
+  if (argIsDecimal && (isSupportedMathMethod || isSupportedDecimalMethod)) {
     knownDecimalNodes.add(path.node);
     return;
   }
 
-  // also should pass error frame here or throw
-  if (
-    object.isIdentifier({ name: builtInLibraryName }) &&
-    PATCHED_DECIMAL_METHODS.includes(methodName)
-  ) {
-    knownDecimalNodes.add(path.node);
+  const error = path.buildCodeFrameError(
+    new TypeError(`This operation does not support Decimal values.`)
+  );
+
+  if (argIsIdentifier) {
+    const newNode = t.callExpression(callee.node, [
+      ...args,
+      t.StringLiteral(error.message),
+    ]);
+
+    knownDecimalNodes.add(newNode);
+    path.replaceWith(newNode);
+    path.skip();
+    return;
   }
+
+  throw error;
 };
 
 const handleUnaryExpressionWithIdentifier = (
@@ -244,7 +270,7 @@ export const handleCallExpression =
     }
 
     if (callee.isMemberExpression()) {
-      handleMemberCall(path, knownDecimalNodes);
+      handleMemberCall(t, path, knownDecimalNodes);
       return;
     }
   };
