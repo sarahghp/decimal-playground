@@ -165,7 +165,7 @@ const App = ({ editorModel, output, configOpts }) => {
             DOM_PLAYGROUND: orderClass(DOM_PLAYGROUND),
           }}
           content={transformedOutput}
-          error={transformationError}
+          transError={transformationError}
         />
       </div>
     </>
