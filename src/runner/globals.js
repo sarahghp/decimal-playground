@@ -14,6 +14,7 @@ const binaryEvaluators = {
   ">=": "gte",
   "<": "lt",
   "<=": "lte",
+  "==": "eq",
 };
 const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 

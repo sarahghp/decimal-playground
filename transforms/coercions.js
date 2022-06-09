@@ -46,5 +46,6 @@ export const coerceNonDecimalArg = (t, arg) => {
     return t.NumericLiteral(Number(arg.value));
   }
 
+  // All other argument types are coerced by Big/Decimal128 libs
   return arg;
 };
