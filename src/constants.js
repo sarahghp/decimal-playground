@@ -50,6 +50,11 @@ const DECIMAL_128 = "decimal 128";
 const PATCHED_MATH_METHODS = ["abs", "floor", "log10", "pow"];
 const PATCHED_DECIMAL_METHODS = ["round"];
 
+const UNPATCHED_MATH_METHODS = Object.getOwnPropertyNames(Math).filter((el) => {
+  // first test filters out capitalized constants
+  return /([a-z])+/.test(el) && !PATCHED_MATH_METHODS.includes(el);
+});
+
 export {
   DEFAULT_TEXT,
   EDITOR_OPTIONS,
@@ -64,4 +69,5 @@ export {
   DEC_128_PREFIX,
   PATCHED_MATH_METHODS,
   PATCHED_DECIMAL_METHODS,
+  UNPATCHED_MATH_METHODS,
 };

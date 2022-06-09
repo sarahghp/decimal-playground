@@ -10,13 +10,18 @@ const editorOptions = {
   wordWrap: "on",
 };
 
-const Console = ({ logsList, error, orderClass }) => {
-  return error ? (
+const Console = ({ logsList, errorList, orderClass }) => {
+  const processedErrors = errorList
+    .filter(Boolean)
+    .map((err) => err.data ?? "")
+    .join("\n");
+
+  return processedErrors ? (
     <div className={`editorWrapper ${orderClass}`}>
       <MonacoEditor
         options={editorOptions}
         language="javascript"
-        value={error.message}
+        value={processedErrors}
       />
     </div>
   ) : (
