@@ -363,26 +363,6 @@ export const replaceWithUnaryDecimalExpression =
     );
   };
 
-export const sharedSingleOps = {
-  "+": "add",
-  "*": "mul",
-  "-": "sub",
-};
-
-export const sharedMixedOps = {
-  ">": "gt",
-  ">=": "gte",
-  "<": "lt",
-  "<=": "lte",
-  "==": "eq",
-};
-
-export const specialCaseOps = {
-  "===": "tripleEquals",
-  "!=": "notEquals",
-  "!==": "notTripleEquals",
-};
-
 export const unaryDecimalFns = {
   typeof: decimalTypeof,
   "-": unaryNegate,

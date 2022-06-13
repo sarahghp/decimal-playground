@@ -11,7 +11,7 @@ const pow = (impl, decimal, exponent, options) => {
     `);
   }
 
-  const roundMe = maximumFractionDigits || roundingMode;
+  const roundMe = Object.keys(options).length > 1;
   const result = decimal.pow(exponent);
 
   return roundMe ? round(impl, result, options) : result;

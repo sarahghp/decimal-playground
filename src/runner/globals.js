@@ -10,6 +10,7 @@ const binaryEvaluators = {
   "*": "mul",
   "-": "sub",
   "/": "div",
+  "%": "mod",
   ">": "gt",
   ">=": "gte",
   "<": "lt",

@@ -47,13 +47,43 @@ const CHECKERBOARD = "checkerboard";
 const BIG_DECIMAL = "big decimal";
 const DECIMAL_128 = "decimal 128";
 
+// Is pow in both lists? It sure is! It's an experiment. Shhhhhh.
 const PATCHED_MATH_METHODS = ["abs", "floor", "log10", "pow"];
-const PATCHED_DECIMAL_METHODS = ["pow", "round"];
+const PATCHED_DECIMAL_METHODS = [
+  "add",
+  "divide",
+  "multiply",
+  "pow",
+  "remainder",
+  "round",
+  "subtract",
+];
 
 const UNPATCHED_MATH_METHODS = Object.getOwnPropertyNames(Math).filter((el) => {
   // first test filters out capitalized constants
   return /([a-z])+/.test(el) && !PATCHED_MATH_METHODS.includes(el);
 });
+
+const SHARED_SINGLE_OPS = {
+  "+": "add",
+  "*": "mul",
+  "-": "sub",
+  "%": "mod",
+};
+
+const SHARED_MIXED_OPS = {
+  ">": "gt",
+  ">=": "gte",
+  "<": "lt",
+  "<=": "lte",
+  "==": "eq",
+};
+
+const SPECIAL_CASE_OPS = {
+  "===": "tripleEquals",
+  "!=": "notEquals",
+  "!==": "notTripleEquals",
+};
 
 export {
   DEFAULT_TEXT,
@@ -69,5 +99,8 @@ export {
   DEC_128_PREFIX,
   PATCHED_MATH_METHODS,
   PATCHED_DECIMAL_METHODS,
+  SHARED_SINGLE_OPS,
+  SHARED_MIXED_OPS,
+  SPECIAL_CASE_OPS,
   UNPATCHED_MATH_METHODS,
 };
