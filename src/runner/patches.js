@@ -11,6 +11,7 @@ import {
   checkAndInitMathHandlers,
   initUnsupportedMathHandlers,
 } from "./patch-math.js";
+import { powImpl } from "./patch-pow.js";
 import { roundImpl } from "./patch-round.js";
 import {
   createUnaryHandler,
@@ -22,6 +23,11 @@ import {
 
 checkAndInitMathHandlers(createUnaryHandler, createNaryHandler);
 initUnsupportedMathHandlers(throwsOnDecimalArg);
+
+Decimal.pow = new Proxy(
+  decimalOnlyBaseFn("Decimal.pow"),
+  createUnaryHandler(powImpl)
+);
 
 Decimal.round = new Proxy(
   decimalOnlyBaseFn("Decimal.round"),

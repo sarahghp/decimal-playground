@@ -68,12 +68,12 @@ const roundFractionImpl = {
   },
 };
 
-const round = (implName, decimal, options) => {
+export const round = (implName, decimal, options) => {
   const { maximumFractionDigits, roundingMode, errorMessage } = options;
 
   if (!roundingMode) {
     throw new TypeError(`
-      roundingMode option is required for Decimal.round()
+      roundingMode option is required to round Decimal values
       ${errorMessage}
     `);
   }
@@ -82,7 +82,7 @@ const round = (implName, decimal, options) => {
 
   if (!(coercedFractionDigits >= 0)) {
     throw new TypeError(`
-      maximumFractionDigits option is required for Decimal.round()
+      maximumFractionDigits option is required to round Decimal values
       ${errorMessage}
     `);
   }

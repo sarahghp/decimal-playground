@@ -48,7 +48,7 @@ const BIG_DECIMAL = "big decimal";
 const DECIMAL_128 = "decimal 128";
 
 const PATCHED_MATH_METHODS = ["abs", "floor", "log10", "pow"];
-const PATCHED_DECIMAL_METHODS = ["round"];
+const PATCHED_DECIMAL_METHODS = ["pow", "round"];
 
 const UNPATCHED_MATH_METHODS = Object.getOwnPropertyNames(Math).filter((el) => {
   // first test filters out capitalized constants

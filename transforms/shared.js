@@ -94,7 +94,7 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
   if (isSupportedDecimalMethod) {
     const decimalError = path.buildCodeFrameError("");
     const errProperty = t.objectProperty(
-      t.stringLiteral("errorMessage"),
+      t.Identifier("errorMessage"),
       t.StringLiteral(decimalError.message)
     );
 
