@@ -56,6 +56,7 @@ const handleIdentifierCall = (
   }
 };
 
+// TODO: Decompose into two functions for Math and Decimal branches
 const handleMemberCall = (t, path, knownDecimalNodes) => {
   const callee = path.get("callee");
   const object = callee.get("object");
@@ -85,8 +86,28 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
   const isSupportedDecimalMethod =
     isDecimalMethod && PATCHED_DECIMAL_METHODS.includes(methodName);
 
-  if (argIsDecimal && (isSupportedMathMethod || isSupportedDecimalMethod)) {
+  if (argIsDecimal && isSupportedMathMethod) {
     knownDecimalNodes.add(path.node);
+    return;
+  }
+
+  if (isSupportedDecimalMethod) {
+    const decimalError = path.buildCodeFrameError("");
+    const errProperty = t.objectProperty(
+      t.Identifier("errorMessage"),
+      t.StringLiteral(decimalError.message)
+    );
+
+    const lastArg = args[args.length - 1];
+    const optionsWithError = t.isObjectExpression(lastArg)
+      ? t.ObjectExpression([...args.pop().properties, errProperty])
+      : t.ObjectExpression([errProperty]);
+
+    const newNode = t.callExpression(callee.node, [...args, optionsWithError]);
+
+    knownDecimalNodes.add(newNode);
+    path.replaceWith(newNode);
+    path.skip();
     return;
   }
 
@@ -94,7 +115,7 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
     new TypeError(`This operation does not support Decimal values.`)
   );
 
-  if (argIsIdentifier) {
+  if (argIsIdentifier && isMathMethod) {
     const newNode = t.callExpression(callee.node, [
       ...args,
       t.StringLiteral(error.message),
@@ -341,26 +362,6 @@ export const replaceWithUnaryDecimalExpression =
       new SyntaxError(`Unary ${operator} is not currently supported.`)
     );
   };
-
-export const sharedSingleOps = {
-  "+": "add",
-  "*": "mul",
-  "-": "sub",
-};
-
-export const sharedMixedOps = {
-  ">": "gt",
-  ">=": "gte",
-  "<": "lt",
-  "<=": "lte",
-  "==": "eq",
-};
-
-export const specialCaseOps = {
-  "===": "tripleEquals",
-  "!=": "notEquals",
-  "!==": "notTripleEquals",
-};
 
 export const unaryDecimalFns = {
   typeof: decimalTypeof,

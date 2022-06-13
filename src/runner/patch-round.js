@@ -68,26 +68,23 @@ const roundFractionImpl = {
   },
 };
 
-const round = (decimal, options = {}) => {
-  // decimal argument is guaranteed to be either a Decimal or Big here
-  const implName = decimal instanceof Decimal ? DECIMAL_128 : BIG_DECIMAL;
-
-  if (typeof options !== "object") {
-    throw new TypeError("Second argument to Decimal.round() must be an object");
-  }
-
-  let { maximumFractionDigits, roundingMode } = options;
+export const round = (implName, decimal, options) => {
+  const { maximumFractionDigits, roundingMode, errorMessage } = options;
 
   if (!roundingMode) {
-    throw new TypeError("RoundingMode option is required for Decimal.round()");
+    throw new TypeError(`
+      roundingMode option is required to round Decimal values
+      ${errorMessage}
+    `);
   }
 
   const coercedFractionDigits = Number(maximumFractionDigits);
 
   if (!(coercedFractionDigits >= 0)) {
-    throw new TypeError(
-      "MaximumFractionDigits option is required for Decimal.round()"
-    );
+    throw new TypeError(`
+      maximumFractionDigits option is required to round Decimal values
+      ${errorMessage}
+    `);
   }
 
   const internalMode = roundingModeImpl[implName](roundingMode);
@@ -101,9 +98,9 @@ const round = (decimal, options = {}) => {
 
 export const roundImpl = {
   [DECIMAL_128](decimal, options) {
-    return round(decimal, options);
+    return round(DECIMAL_128, decimal, options);
   },
   [BIG_DECIMAL](decimal, options) {
-    return round(decimal, options);
+    return round(BIG_DECIMAL, decimal, options);
   },
 };
