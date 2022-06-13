@@ -1,4 +1,10 @@
 import {
+  SHARED_SINGLE_OPS,
+  SHARED_MIXED_OPS,
+  SPECIAL_CASE_OPS,
+} from "../src/constants.js";
+
+import {
   checkAndThrowForDecimal,
   createIdentifierNode,
   createLiteralsNode,
@@ -11,14 +17,11 @@ import {
   isDefiniedIdentifier,
   replaceWithDecimal,
   replaceWithUnaryDecimalExpression,
-  sharedMixedOps,
-  sharedSingleOps,
-  specialCaseOps,
 } from "./shared.js";
 
 const implementationIdentifier = "Big";
 
-const opToName = { ...sharedSingleOps, ...sharedMixedOps };
+const opToName = { ...SHARED_SINGLE_OPS, ...SHARED_MIXED_OPS };
 
 const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
   let { left, right, operator } = path.node;
@@ -38,14 +41,14 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     return;
   }
 
-  const isSpecialCaseOp = Reflect.has(specialCaseOps, operator);
+  const isSpecialCaseOp = Reflect.has(SPECIAL_CASE_OPS, operator);
 
   if (isSpecialCaseOp) {
-    handleSpecialCaseOps(t, knownDecimalNodes, path, specialCaseOps);
+    handleSpecialCaseOps(t, knownDecimalNodes, path, SPECIAL_CASE_OPS);
     return;
   }
 
-  const isMixedTypesOp = Reflect.has(sharedMixedOps, operator);
+  const isMixedTypesOp = Reflect.has(SHARED_MIXED_OPS, operator);
 
   const transformations = isMixedTypesOp
     ? handleMixedOps(
