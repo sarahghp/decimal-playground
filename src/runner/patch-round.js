@@ -68,10 +68,7 @@ const roundFractionImpl = {
   },
 };
 
-const round = (decimal, options = {}) => {
-  // decimal argument is guaranteed to be either a Decimal or Big here
-  const implName = decimal instanceof Decimal ? DECIMAL_128 : BIG_DECIMAL;
-
+const round = (implName, decimal, options = {}) => {
   if (typeof options !== "object") {
     throw new TypeError("Second argument to Decimal.round() must be an object");
   }
@@ -101,9 +98,9 @@ const round = (decimal, options = {}) => {
 
 export const roundImpl = {
   [DECIMAL_128](decimal, options) {
-    return round(decimal, options);
+    return round(DECIMAL_128, decimal, options);
   },
   [BIG_DECIMAL](decimal, options) {
-    return round(decimal, options);
+    return round(BIG_DECIMAL, decimal, options);
   },
 };
