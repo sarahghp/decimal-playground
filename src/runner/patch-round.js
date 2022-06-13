@@ -68,23 +68,23 @@ const roundFractionImpl = {
   },
 };
 
-const round = (implName, decimal, options = {}) => {
-  if (typeof options !== "object") {
-    throw new TypeError("Second argument to Decimal.round() must be an object");
-  }
-
-  let { maximumFractionDigits, roundingMode } = options;
+const round = (implName, decimal, options) => {
+  const { maximumFractionDigits, roundingMode, errorMessage } = options;
 
   if (!roundingMode) {
-    throw new TypeError("RoundingMode option is required for Decimal.round()");
+    throw new TypeError(`
+      roundingMode option is required for Decimal.round()
+      ${errorMessage}
+    `);
   }
 
   const coercedFractionDigits = Number(maximumFractionDigits);
 
   if (!(coercedFractionDigits >= 0)) {
-    throw new TypeError(
-      "MaximumFractionDigits option is required for Decimal.round()"
-    );
+    throw new TypeError(`
+      maximumFractionDigits option is required for Decimal.round()
+      ${errorMessage}
+    `);
   }
 
   const internalMode = roundingModeImpl[implName](roundingMode);
