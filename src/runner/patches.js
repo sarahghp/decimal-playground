@@ -19,13 +19,16 @@ import {
   subtractImpl,
 } from "./patch-binary.js";
 import { powImpl } from "./patch-pow.js";
+import { protoPatch } from "./patch-prototype.js";
 import { roundImpl } from "./patch-round.js";
 import {
   createUnaryHandler,
   createNaryHandler,
+  createPrototypeHandler,
   decimalOnlyBaseFn,
   throwsOnDecimalArg,
   throwUnimplemented,
+  unimplementedButIntended,
 } from "./patch-util.js";
 
 checkAndInitMathHandlers(createUnaryHandler, createNaryHandler);
@@ -70,3 +73,36 @@ Decimal.tripleEquals = typeCheckAndCallEq;
 Decimal.typeof = typeofCheck;
 Decimal.notEquals = invertEquals;
 Decimal.notTripleEquals = invertTypeCheckAndCallEq;
+
+Big.prototype.toLocaleString = unimplementedButIntended;
+Decimal128.prototype.toLocaleString = unimplementedButIntended;
+
+Decimal128.prototype.toFixed = new Proxy(
+  Decimal128.prototype.toFixed,
+  createPrototypeHandler(DECIMAL_128, protoPatch)
+);
+
+Big.prototype.toFixed = new Proxy(
+  Big.prototype.toFixed,
+  createPrototypeHandler(BIG_DECIMAL, protoPatch)
+);
+
+Decimal128.prototype.toExponential = new Proxy(
+  Decimal128.prototype.toExponential,
+  createPrototypeHandler(DECIMAL_128, protoPatch)
+);
+
+Big.prototype.toExponential = new Proxy(
+  Big.prototype.toExponential,
+  createPrototypeHandler(BIG_DECIMAL, protoPatch)
+);
+
+Decimal128.prototype.toPrecision = new Proxy(
+  Decimal128.prototype.toPrecision,
+  createPrototypeHandler(DECIMAL_128, protoPatch)
+);
+
+Big.prototype.toPrecision = new Proxy(
+  Big.prototype.toPrecision,
+  createPrototypeHandler(BIG_DECIMAL, protoPatch)
+);

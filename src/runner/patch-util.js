@@ -1,5 +1,11 @@
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 
+const createPrototypeHandler = (name, fn) => ({
+  apply(target, thisArg, argsList) {
+    return fn(name, target, thisArg, argsList);
+  },
+});
+
 const createUnaryHandler = (substituteFns) => ({
   apply(target, thisArg, argsList) {
     const [arg] = argsList;
@@ -67,10 +73,20 @@ const throwsOnDecimalArg = (methodName) => ({
   },
 });
 
+const unimplementedButIntended = (what) => {
+  console.info(
+    `You have tried to use ${what}, which is in the proposal, but has yet to be implemented.
+    Tell us more about your use case at https://github.com/tc39/proposal-decimal.
+    `
+  );
+};
+
 export {
   createUnaryHandler,
   createNaryHandler,
+  createPrototypeHandler,
   decimalOnlyBaseFn,
   throwsOnDecimalArg,
   throwUnimplemented,
+  unimplementedButIntended,
 };
