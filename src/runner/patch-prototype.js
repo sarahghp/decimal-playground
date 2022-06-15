@@ -1,6 +1,3 @@
-// add options and error to call
-// check for options and then call round on target fn
-
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 import { dec128Modes, bigDecModes } from "./patch-round.js";
 
@@ -19,6 +16,7 @@ export const protoPatch = (name, target, decimal, [val, options = {}]) => {
   // need to coerce strings — if it coerces to NaN, the behavior is the same as 0,
   // bigInt throws
 
+  // put this in a try and then throw error with stack?
   return roundingMode
     ? target.call(decimal, val, modes[name][roundingMode])
     : target.call(decimal, val, modes[name]["half-up"]);

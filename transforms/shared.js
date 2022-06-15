@@ -1,6 +1,7 @@
 import {
-  PATCHED_MATH_METHODS,
   PATCHED_DECIMAL_METHODS,
+  PATCHED_MATH_METHODS,
+  PATCHED_PROTOTYPE_METHODS,
 } from "../src/constants.js";
 
 import { coerceConstructorArg, coerceNonDecimalArg } from "./coercions.js";
@@ -56,6 +57,26 @@ const handleIdentifierCall = (
   }
 };
 
+const addErrorMessage = (t, path, knownDecimalNodes, args, callee) => {
+  const decimalError = path.buildCodeFrameError("");
+  const errProperty = t.objectProperty(
+    t.Identifier("errorMessage"),
+    t.StringLiteral(decimalError.message)
+  );
+
+  const lastArg = args[args.length - 1];
+  const optionsWithError = t.isObjectExpression(lastArg)
+    ? t.ObjectExpression([...args.pop().properties, errProperty])
+    : t.ObjectExpression([errProperty]);
+
+  const newNode = t.callExpression(callee.node, [...args, optionsWithError]);
+
+  knownDecimalNodes.add(newNode);
+  path.replaceWith(newNode);
+  path.skip();
+  return;
+};
+
 // TODO: Decompose into two functions for Math and Decimal branches
 const handleMemberCall = (t, path, knownDecimalNodes) => {
   const callee = path.get("callee");
@@ -66,6 +87,14 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
     : property.node.value;
 
   const { arguments: args } = path.node;
+
+  const isSupportedPrototypeMethod =
+    object.isIdentifier() &&
+    PATCHED_PROTOTYPE_METHODS.includes(property.node.name);
+  if (isSupportedPrototypeMethod) {
+    addErrorMessage(t, path, knownDecimalNodes, args, callee);
+    return;
+  }
 
   const argIsDecimal = knownDecimalNodes.has(args[0]);
   const argIsIdentifier = isDefiniedIdentifier(t, args[0]);
@@ -92,22 +121,7 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
   }
 
   if (isSupportedDecimalMethod) {
-    const decimalError = path.buildCodeFrameError("");
-    const errProperty = t.objectProperty(
-      t.Identifier("errorMessage"),
-      t.StringLiteral(decimalError.message)
-    );
-
-    const lastArg = args[args.length - 1];
-    const optionsWithError = t.isObjectExpression(lastArg)
-      ? t.ObjectExpression([...args.pop().properties, errProperty])
-      : t.ObjectExpression([errProperty]);
-
-    const newNode = t.callExpression(callee.node, [...args, optionsWithError]);
-
-    knownDecimalNodes.add(newNode);
-    path.replaceWith(newNode);
-    path.skip();
+    addErrorMessage(t, path, knownDecimalNodes, args, callee);
     return;
   }
 
