@@ -92,7 +92,9 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
     object.isIdentifier() &&
     PATCHED_PROTOTYPE_METHODS.includes(property.node.name);
   if (isSupportedPrototypeMethod) {
-    addErrorMessage(t, path, knownDecimalNodes, args, callee);
+    const convertedArgs = !args.length ? [t.identifier("undefined")] : args;
+
+    addErrorMessage(t, path, knownDecimalNodes, convertedArgs, callee);
     return;
   }
 

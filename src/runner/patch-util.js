@@ -1,8 +1,8 @@
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 
-const createPrototypeHandler = (name, fn) => ({
+const createPrototypeHandler = (fn) => ({
   apply(target, thisArg, argsList) {
-    return fn(name, target, thisArg, argsList);
+    return fn(target, thisArg, argsList);
   },
 });
 
