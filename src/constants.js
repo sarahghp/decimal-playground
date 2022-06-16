@@ -59,6 +59,8 @@ const PATCHED_DECIMAL_METHODS = [
   "subtract",
 ];
 
+const PATCHED_PROTOTYPE_METHODS = ["toExponential", "toFixed", "toPrecision"];
+
 const UNPATCHED_MATH_METHODS = Object.getOwnPropertyNames(Math).filter((el) => {
   // first test filters out capitalized constants
   return /([a-z])+/.test(el) && !PATCHED_MATH_METHODS.includes(el);
@@ -97,8 +99,9 @@ export {
   BIG_DECIMAL,
   DECIMAL_128,
   DEC_128_PREFIX,
-  PATCHED_MATH_METHODS,
   PATCHED_DECIMAL_METHODS,
+  PATCHED_MATH_METHODS,
+  PATCHED_PROTOTYPE_METHODS,
   SHARED_SINGLE_OPS,
   SHARED_MIXED_OPS,
   SPECIAL_CASE_OPS,
