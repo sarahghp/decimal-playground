@@ -11,6 +11,7 @@ import {
   earlyReturn,
   handleCallExpression,
   handleLogicalExpression,
+  handleMemberExpression,
   handleMixedOps,
   handleSpecialCaseOps,
   handleSingleTypeOps,
@@ -95,6 +96,9 @@ export default function (babel) {
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       LogicalExpression: {
         exit: handleLogicalExpression(t, knownDecimalNodes),
+      },
+      MemberExpression: {
+        exit: handleMemberExpression(t, knownDecimalNodes),
       },
       NewExpression: checkAndThrowForDecimal,
       UnaryExpression: {
