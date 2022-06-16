@@ -24,9 +24,6 @@ const binaryExpressionHandler = (left, right, op, message) => {
   const rightIsDecimal = isDecInstance(right);
 
   if (leftIsDecimal !== rightIsDecimal) {
-    const leftValue = leftIsDecimal ? `${left}m` : left;
-    const rightValue = rightIsDecimal ? `${right}m` : right;
-
     throw new TypeError(message);
   }
 

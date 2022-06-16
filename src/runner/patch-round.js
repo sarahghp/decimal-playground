@@ -11,7 +11,7 @@ const RoundingMode = {
   HALF_EVEN: "half-even",
 };
 
-const dec128Modes = new Map([
+export const dec128Modes = new Map([
   [RoundingMode.UP, Decimal.ROUND_UP],
   [RoundingMode.DOWN, Decimal.ROUND_DOWN],
   [RoundingMode.HALF_UP, Decimal.ROUND_HALF_UP],
@@ -19,7 +19,7 @@ const dec128Modes = new Map([
   [RoundingMode.HALF_EVEN, Decimal.ROUND_HALF_EVEN],
 ]);
 
-const bigDecModes = new Map([
+export const bigDecModes = new Map([
   [RoundingMode.UP, Big.roundUp],
   [RoundingMode.DOWN, Big.roundDown],
   [RoundingMode.HALF_UP, Big.roundHalfUp],
