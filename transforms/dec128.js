@@ -10,6 +10,7 @@ import {
   createLiteralsNode,
   earlyReturn,
   handleCallExpression,
+  handleConditional,
   handleLogicalExpression,
   handleMemberExpression,
   handleMixedOps,
@@ -92,6 +93,9 @@ export default function (babel) {
           knownDecimalNodes,
           implementationIdentifier
         ),
+      },
+      Conditional: {
+        exit: handleConditional(t, knownDecimalNodes),
       },
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       LogicalExpression: {
