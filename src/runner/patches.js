@@ -19,7 +19,11 @@ import {
   subtractImpl,
 } from "./patch-binary.js";
 import { powImpl } from "./patch-pow.js";
-import { protoPatch } from "./patch-prototype.js";
+import {
+  decProtoPatch,
+  decToStringMap,
+  decToStringSet,
+} from "./patch-prototype.js";
 import { roundImpl } from "./patch-round.js";
 import {
   createUnaryHandler,
@@ -33,6 +37,26 @@ import {
 
 checkAndInitMathHandlers(createUnaryHandler, createNaryHandler);
 initUnsupportedMathHandlers(throwsOnDecimalArg);
+
+Map.prototype.set = new Proxy(
+  Map.prototype.set,
+  createPrototypeHandler(decToStringMap)
+);
+
+Map.prototype.get = new Proxy(
+  Map.prototype.get,
+  createPrototypeHandler(decToStringMap)
+);
+
+Set.prototype.add = new Proxy(
+  Set.prototype.add,
+  createPrototypeHandler(decToStringSet)
+);
+
+Set.prototype.has = new Proxy(
+  Set.prototype.has,
+  createPrototypeHandler(decToStringSet)
+);
 
 Decimal.add = new Proxy(
   decimalOnlyBaseFn("Decimal.add"),
@@ -79,30 +103,30 @@ Decimal128.prototype.toLocaleString = unimplementedButIntended;
 
 Decimal128.prototype.toFixed = new Proxy(
   Decimal128.prototype.toFixed,
-  createPrototypeHandler(protoPatch(DECIMAL_128, "toFixed"))
+  createPrototypeHandler(decProtoPatch(DECIMAL_128, "toFixed"))
 );
 
 Big.prototype.toFixed = new Proxy(
   Big.prototype.toFixed,
-  createPrototypeHandler(protoPatch(BIG_DECIMAL, "toFixed"))
+  createPrototypeHandler(decProtoPatch(BIG_DECIMAL, "toFixed"))
 );
 
 Decimal128.prototype.toExponential = new Proxy(
   Decimal128.prototype.toExponential,
-  createPrototypeHandler(protoPatch(DECIMAL_128, "toExponential"))
+  createPrototypeHandler(decProtoPatch(DECIMAL_128, "toExponential"))
 );
 
 Big.prototype.toExponential = new Proxy(
   Big.prototype.toExponential,
-  createPrototypeHandler(protoPatch(BIG_DECIMAL, "toExponential"))
+  createPrototypeHandler(decProtoPatch(BIG_DECIMAL, "toExponential"))
 );
 
 Decimal128.prototype.toPrecision = new Proxy(
   Decimal128.prototype.toPrecision,
-  createPrototypeHandler(protoPatch(DECIMAL_128, "toPrecision"))
+  createPrototypeHandler(decProtoPatch(DECIMAL_128, "toPrecision"))
 );
 
 Big.prototype.toPrecision = new Proxy(
   Big.prototype.toPrecision,
-  createPrototypeHandler(protoPatch(BIG_DECIMAL, "toPrecision"))
+  createPrototypeHandler(decProtoPatch(BIG_DECIMAL, "toPrecision"))
 );
