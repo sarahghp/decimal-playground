@@ -2,6 +2,7 @@
 
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 import {
+  addOrConcat,
   invertEquals,
   invertTypeCheckAndCallEq,
   typeCheckAndCallEq,
@@ -93,6 +94,7 @@ Decimal.round = new Proxy(
   createUnaryHandler(roundImpl)
 );
 
+Decimal.addOrConcat = addOrConcat;
 Decimal.tripleEquals = typeCheckAndCallEq;
 Decimal.typeof = typeofCheck;
 Decimal.notEquals = invertEquals;

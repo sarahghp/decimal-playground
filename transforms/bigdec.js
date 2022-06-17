@@ -30,14 +30,13 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
 
   const isIdentifier = (arg) => isDefiniedIdentifier(t, arg);
   const includesIdentifierArgument = [left, right].some(isIdentifier);
-  const bothArgumentsAreIdentifiers = [left, right].every(isIdentifier);
 
   const leftIsDecimal = knownDecimalNodes.has(left);
   const rightIsDecimal = knownDecimalNodes.has(right);
 
   if (
     earlyReturn([
-      !leftIsDecimal && !rightIsDecimal && !bothArgumentsAreIdentifiers,
+      !leftIsDecimal && !rightIsDecimal && !includesIdentifierArgument,
     ])
   ) {
     return;

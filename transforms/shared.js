@@ -280,11 +280,17 @@ export const handleSpecialCaseOps = (t, knownDecimalNodes, path, opToName) => {
   // create call to Decimal[opToName[operator]]
   let { left, right, operator } = path.node;
 
+  const { message } = path.buildCodeFrameError("");
+
   const member = t.memberExpression(
     t.identifier(builtInLibraryName),
     t.identifier(opToName[operator])
   );
-  const newNode = t.callExpression(member, [left, right]);
+  const newNode = t.callExpression(member, [
+    left,
+    right,
+    t.StringLiteral(message),
+  ]);
 
   knownDecimalNodes.add(newNode);
 
@@ -324,15 +330,6 @@ export const handleConditional = (t, knownDecimalNodes) => (path) => {
         t.Identifier(test.name),
       ])
     : t.numericLiteral(Number(test.arguments[0].value));
-
-  // if (isDefiniedIdentifier(t, test)) {
-  //   convertedTest =
-  //   console.log('id');
-  // }
-  //
-  // if (knownDecimalNodes.has(test)) {
-  //   convertedTest = t.numericLiteral(Number(test.arguments[0].value));
-  // }
 
   const newNode = alternate
     ? t[type](convertedTest, consequent, alternate)
