@@ -336,6 +336,27 @@ export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
   path.skip();
 };
 
+export const handleMemberExpression = (t, knownDecimalNodes) => (path) => {
+  const object = path.get("object");
+  const property = path.get("property");
+
+  if (!knownDecimalNodes.has(property.node)) {
+    return;
+  }
+
+  const newProperty = t.memberExpression(
+    property.node,
+    t.Identifier("toString")
+  );
+  const newCall = t.callExpression(newProperty, []);
+  const newNode = t.MemberExpression(object.node, newCall, true);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
+};
+
 export const earlyReturn = (conditions) => {
   return conditions.every(Boolean);
 };

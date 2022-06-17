@@ -66,11 +66,9 @@ const coerceValue = (patchedMethodName, v) => {
   `);
 };
 
-export const protoPatch =
+export const decProtoPatch =
   (implName, patchedMethodName) =>
   (target, decimal, [val, options = {}]) => {
-    console.log("^^^", implName, decimal, val, options);
-
     const { roundingMode, errorMessage } = options;
 
     const call = roundingMode
@@ -94,3 +92,17 @@ export const protoPatch =
       throw new err.constructor(err);
     }
   };
+
+export const decToStringMap = (target, thisArg, [key, val]) => {
+  const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
+
+  const convertedKey = isDecInstance(key) ? `${key.toString()}m` : key;
+  return target.call(thisArg, convertedKey, val);
+};
+
+export const decToStringSet = (target, thisArg, [val]) => {
+  const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
+
+  const convertedVal = isDecInstance(val) ? `${val.toString()}m` : val;
+  return target.call(thisArg, convertedVal);
+};
