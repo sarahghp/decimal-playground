@@ -315,17 +315,33 @@ export const handleCallExpression =
 export const handleConditional = (t, knownDecimalNodes) => (path) => {
   const { test, consequent, alternate, type } = path.node;
 
-  if (knownDecimalNodes.has(test)) {
-    const convertedTest = t.numericLiteral(Number(test.arguments[0].value));
-    const newNode = alternate
-      ? t[type](convertedTest, consequent, alternate)
-      : t[type](convertedTest, consequent);
-
-    knownDecimalNodes.add(newNode);
-
-    path.replaceWith(newNode);
-    path.skip();
+  if (!isDefiniedIdentifier(t, test) && !knownDecimalNodes.has(test)) {
+    return;
   }
+
+  const convertedTest = isDefiniedIdentifier(t, test)
+    ? t.callExpression(t.Identifier("wrappedConditionalTest"), [
+        t.Identifier(test.name),
+      ])
+    : t.numericLiteral(Number(test.arguments[0].value));
+
+  // if (isDefiniedIdentifier(t, test)) {
+  //   convertedTest =
+  //   console.log('id');
+  // }
+  //
+  // if (knownDecimalNodes.has(test)) {
+  //   convertedTest = t.numericLiteral(Number(test.arguments[0].value));
+  // }
+
+  const newNode = alternate
+    ? t[type](convertedTest, consequent, alternate)
+    : t[type](convertedTest, consequent);
+
+  knownDecimalNodes.add(newNode);
+
+  path.replaceWith(newNode);
+  path.skip();
 };
 
 export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {

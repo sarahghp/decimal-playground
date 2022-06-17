@@ -36,6 +36,14 @@ const binaryExpressionHandler = (left, right, op, message) => {
   return eval(`${left} ${op} ${right}`);
 };
 
+const wrappedConditionalTest = (a) => {
+  if (isDecInstance(a)) {
+    return Number(a);
+  }
+
+  return a;
+};
+
 const wrappedConstructorIdentifier = (a, error) => {
   if (a === null || a === undefined) {
     throw new TypeError(error);
