@@ -67,7 +67,6 @@ const UNPATCHED_MATH_METHODS = Object.getOwnPropertyNames(Math).filter((el) => {
 });
 
 const SHARED_SINGLE_OPS = {
-  "+": "add",
   "*": "mul",
   "-": "sub",
   "%": "mod",
@@ -82,6 +81,7 @@ const SHARED_MIXED_OPS = {
 };
 
 const SPECIAL_CASE_OPS = {
+  "+": "addOrConcat",
   "===": "tripleEquals",
   "!=": "notEquals",
   "!==": "notTripleEquals",

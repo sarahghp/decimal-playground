@@ -1,7 +1,40 @@
+const isAllDecimals = (arr) =>
+  arr.every((arg) => arg instanceof Decimal128 || arg instanceof Big);
+
+const containsDecimals = (arr) =>
+  arr.some((arg) => arg instanceof Decimal128 || arg instanceof Big);
+
+export const addOrConcat = (left, right, errorMessage) => {
+  const someDecimals = containsDecimals([left, right]);
+
+  if (!someDecimals) {
+    return left + right;
+  }
+
+  const allDecimals = isAllDecimals([left, right]);
+
+  if (allDecimals) {
+    return Decimal.add(left, right);
+  }
+
+  const containsString = [left, right].some((arg) => typeof arg === "string");
+
+  if (containsString) {
+    return [left, right]
+      .map((arg) => {
+        return typeof arg === "string" ? arg : arg.toString();
+      })
+      .join("");
+  }
+
+  throw new TypeError(`
+    Mixed numeric types are not allowed.
+    ${errorMessage}
+  `);
+};
+
 export const typeCheckAndCallEq = (left, right) => {
-  const allDecimals = [left, right].every(
-    (arg) => arg instanceof Decimal128 || arg instanceof Big
-  );
+  const allDecimals = isAllDecimals([left, right]);
 
   if (!allDecimals) {
     return false;

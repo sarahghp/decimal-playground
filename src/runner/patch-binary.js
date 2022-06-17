@@ -8,23 +8,30 @@ const nameToImpl = {
 
 const ops = {
   ...SHARED_SINGLE_OPS,
+  "+": "add",
   "/": "div",
 };
 
-const binaryImplGenerator = (opSymbol) => (name, left, right, options) => {
-  const { maximumFractionDigits, roundingMode, errorMessage } = options;
+const binaryImplGenerator =
+  (opSymbol) =>
+  (name, left, right, options = {}) => {
+    const {
+      maximumFractionDigits,
+      roundingMode,
+      errorMessage = "An unknown error has occurred",
+    } = options;
 
-  const impl = nameToImpl[name];
+    const impl = nameToImpl[name];
 
-  if (left instanceof impl !== right instanceof impl) {
-    throw new TypeError(errorMessage);
-  }
+    if (left instanceof impl !== right instanceof impl) {
+      throw new TypeError(errorMessage);
+    }
 
-  const roundMe = Object.keys(options).length > 1;
-  const result = left[ops[opSymbol]](right);
+    const roundMe = Object.keys(options).length > 1;
+    const result = left[ops[opSymbol]](right);
 
-  return roundMe ? round(name, result, options) : result;
-};
+    return roundMe ? round(name, result, options) : result;
+  };
 
 export const addImpl = {
   [DECIMAL_128](...args) {
