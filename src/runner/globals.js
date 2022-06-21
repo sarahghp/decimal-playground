@@ -44,6 +44,13 @@ const binaryExpressionHandler = (left, right, op, message) => {
   return Function(`return ${left} ${op} ${right}`)();
 };
 
+const log = (...args) => {
+  const updatedArgs = args.map((el) =>
+    isDecInstance(el) ? el.toString() : el
+  );
+  console.log(updatedArgs);
+};
+
 const wrappedConditionalTest = (a) => {
   if (isDecInstance(a)) {
     return Number(a);
