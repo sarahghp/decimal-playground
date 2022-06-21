@@ -146,25 +146,18 @@ const handleMemberCall = (t, path, knownDecimalNodes) => {
   throw error;
 };
 
-const handleUnaryExpressionWithIdentifier = (
-  t,
-  knownDecimalNodes,
-  path,
-  argument
-) => {
+const handleUnaryExpressionWithIdentifier = (t, path, argument) => {
   const { operator } = path.node;
 
   const { message } = path.buildCodeFrameError(
     new SyntaxError(`Unary ${operator} is not currently supported.`)
   );
 
-  const newNode = t.callExpression(t.Identifier("wrappedUnaryNegate"), [
+  const newNode = t.callExpression(t.Identifier("wrappedUnaryHandler"), [
     argument,
     t.StringLiteral(operator),
     t.StringLiteral(message),
   ]);
-
-  knownDecimalNodes.add(newNode);
 
   path.replaceWith(newNode);
   path.skip();
@@ -198,12 +191,7 @@ const unaryNegate = (t, knownDecimalNodes, path, argument) => {
 export const isDefiniedIdentifier = (t, arg) =>
   t.isIdentifier(arg) && !t.isIdentifier(arg, { name: "undefined" });
 
-export const createIdentifierNode = (
-  t,
-  knownDecimalNodes,
-  path,
-  { left, right, operator }
-) => {
+export const createIdentifierNode = (t, path, { left, right, operator }) => {
   const { message } = path.buildCodeFrameError(
     new TypeError("Mixed numeric types are not allowed.")
   );
@@ -214,8 +202,6 @@ export const createIdentifierNode = (
     t.StringLiteral(operator),
     t.StringLiteral(message),
   ]);
-
-  knownDecimalNodes.add(newNode);
 
   path.replaceWith(newNode);
   path.skip();
@@ -359,29 +345,10 @@ export const handleLogicalExpression = (t, knownDecimalNodes) => (path) => {
   right = knownDecimalNodes.has(right) ? checkAndReplaceZero(right) : right;
 
   const newNode = t.logicalExpression(operator, left, right);
-  knownDecimalNodes.add(newNode);
 
-  path.replaceWith(newNode);
-  path.skip();
-};
-
-export const handleMemberExpression = (t, knownDecimalNodes) => (path) => {
-  const object = path.get("object");
-  const property = path.get("property");
-
-  if (!knownDecimalNodes.has(property.node)) {
-    return;
-  }
-
-  const newProperty = t.memberExpression(
-    property.node,
-    t.Identifier("toString")
-  );
-  const newCall = t.callExpression(newProperty, []);
-  const newNode = t.MemberExpression(object.node, newCall, true);
-
-  knownDecimalNodes.add(newNode);
-
+  // We do not add the node to knownDecimalNodes in this handler because we are not
+  // making it a decimal node but rather replacing 0m with 0 so it behaves as expected
+  // Since objects are truthy, we do not need to replace other values.
   path.replaceWith(newNode);
   path.skip();
 };
@@ -405,6 +372,11 @@ export const replaceWithDecimal = (t, implementationIdentifier) => (path) => {
   path.replaceWith(t.callExpression(callee, [num]));
 };
 
+export const unaryDecimalFns = {
+  typeof: decimalTypeof,
+  "-": unaryNegate,
+};
+
 export const replaceWithUnaryDecimalExpression =
   (t, knownDecimalNodes) => (path) => {
     const { argument, operator } = path.node;
@@ -415,7 +387,7 @@ export const replaceWithUnaryDecimalExpression =
     }
 
     if (isIdentifier) {
-      handleUnaryExpressionWithIdentifier(t, knownDecimalNodes, path, argument);
+      handleUnaryExpressionWithIdentifier(t, path, argument);
       return;
     }
 
@@ -428,8 +400,3 @@ export const replaceWithUnaryDecimalExpression =
       new SyntaxError(`Unary ${operator} is not currently supported.`)
     );
   };
-
-export const unaryDecimalFns = {
-  typeof: decimalTypeof,
-  "-": unaryNegate,
-};
