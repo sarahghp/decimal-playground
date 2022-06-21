@@ -5,23 +5,31 @@
 
 const Decimal128 = Decimal.clone();
 
-const binaryEvaluators = {
+const SHARED_SINGLE_OPS = {
   "+": "add",
   "*": "mul",
   "-": "sub",
   "/": "div",
   "%": "mod",
+};
+
+const SHARED_MIXED_OPS = {
   ">": "gt",
   ">=": "gte",
   "<": "lt",
   "<=": "lte",
   "==": "eq",
 };
+
 const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 
 const binaryExpressionHandler = (left, right, op, message) => {
   const leftIsDecimal = isDecInstance(left);
   const rightIsDecimal = isDecInstance(right);
+
+  if (Reflect.has(SHARED_MIXED_OPS, op)) {
+    return left[SHARED_MIXED_OPS[op]](right);
+  }
 
   if (leftIsDecimal !== rightIsDecimal) {
     throw new TypeError(message);
@@ -30,10 +38,10 @@ const binaryExpressionHandler = (left, right, op, message) => {
   // Now that we've gotten rid of mixed items, we know that whatever is
   // true of left is also true of right
   if (leftIsDecimal) {
-    return left[binaryEvaluators[op]](right);
+    return left[SHARED_SINGLE_OPS[op]](right);
   }
 
-  return eval(`${left} ${op} ${right}`);
+  return Function(`return ${left} ${op} ${right}`)();
 };
 
 const wrappedConditionalTest = (a) => {
@@ -66,9 +74,14 @@ const unaryEvaluators = {
   },
 };
 
-const wrappedUnaryNegate = (argument, operator, error) => {
+const wrappedUnaryHandler = (argument, operator, error) => {
+  // TODO: Figure out why Function(`return ${operator} ${argument}`)() fails with typeof
+  if (operator === "typeof") {
+    return typeof argument;
+  }
+
   if (!isDecInstance(argument)) {
-    return eval(`${operator}${argument}`);
+    return Function(`return ${operator} ${argument}`)();
   }
 
   if (!Reflect.has(unaryEvaluators, operator)) {
