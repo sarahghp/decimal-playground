@@ -100,9 +100,6 @@ export default function (babel) {
       LogicalExpression: {
         exit: handleLogicalExpression(t, knownDecimalNodes),
       },
-      MemberExpression: {
-        exit: handleMemberExpression(t, knownDecimalNodes),
-      },
       NewExpression: checkAndThrowForDecimal,
       UnaryExpression: {
         exit: replaceWithUnaryDecimalExpression(t, knownDecimalNodes),

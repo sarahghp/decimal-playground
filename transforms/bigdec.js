@@ -62,7 +62,7 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     : handleSingleTypeOps(t, knownDecimalNodes, path, opToName);
 
   if (includesIdentifierArgument) {
-    createIdentifierNode(t, knownDecimalNodes, path, transformations);
+    createIdentifierNode(t, path, transformations);
     return;
   }
 
@@ -95,9 +95,6 @@ export default function (babel) {
       DecimalLiteral: replaceWithDecimal(t, implementationIdentifier),
       LogicalExpression: {
         exit: handleLogicalExpression(t, knownDecimalNodes),
-      },
-      MemberExpression: {
-        exit: handleMemberExpression(t, knownDecimalNodes),
       },
       NewExpression: checkAndThrowForDecimal,
       UnaryExpression: {
