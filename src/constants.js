@@ -1,25 +1,21 @@
-const DEFAULT_TEXT = `function snowCactusEscapade() {
-    return 11.1m + 12.m;
+const DEFAULT_TEXT = `// Type your Decimal-using code here!
+// It will execute, and any console output
+// will appear on the right.
+
+// To see the transpiled code, click
+// "Toggle Output" above.
+
+// You can also manipulate the DOM from
+// this code, and see the results with
+// "Toggle DOM".
+
+function snowCactusEscapade(a) {
+    return 11.1m + a;
 }
 
-let x = snowCactusEscapade();
+let x = snowCactusEscapade(12m);
 console.log(x);
 console.log(x.toString());
-
-
-let a = document.createElement("div");
-a.style.backgroundColor = 'seagreen';
-a.style.height = '100px';
-a.style.width = '50%';
-a.style.float = 'left';
-document.querySelector('body').append(a);
-
-let b = document.createElement("div");
-b.style.backgroundColor = 'teal';
-b.style.height = '100px';
-b.style.width = '50%';
-b.style.float = 'right';
-document.querySelector('body').append(b);
 `;
 
 const DEC_128_PREFIX = `

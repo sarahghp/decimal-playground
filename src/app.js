@@ -98,7 +98,7 @@ const App = ({ editorModel, output, configOpts }) => {
   /* Component ordering state and functions  */
   const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState(
-    configOpts.visibleComponents || [EDITOR, CONSOLE, DOM_PLAYGROUND]
+    configOpts.visibleComponents || [EDITOR, CONSOLE]
   );
 
   const orderClass = (item) => {
