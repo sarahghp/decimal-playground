@@ -1,3 +1,5 @@
+/* global Big, Decimal */
+
 import {
   BIG_DECIMAL,
   DECIMAL_128,

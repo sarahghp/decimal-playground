@@ -3,6 +3,8 @@
   Use only under the greatest duress.
 */
 
+/* global Big, Decimal */
+
 import { SHARED_SINGLE_OPS, SHARED_MIXED_OPS } from "../constants.js";
 
 const Decimal128 = Decimal.clone();
