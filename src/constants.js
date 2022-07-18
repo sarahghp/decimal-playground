@@ -1,23 +1,3 @@
-const DEFAULT_TEXT = `// Type your Decimal-using code here!
-// It will execute, and any console output
-// will appear on the right.
-
-// To see the transpiled code, click
-// "Toggle Output" above.
-
-// You can also manipulate the DOM from
-// this code, and see the results with
-// "Toggle DOM".
-
-function snowCactusEscapade(a) {
-    return 11.1m + a;
-}
-
-let x = snowCactusEscapade(12m);
-console.log(x);
-console.log(x.toString());
-`;
-
 const DEC_128_PREFIX = `
   // Decimal128 allows for 34 digits of significand
   Decimal128.set({precision: 34});
@@ -84,7 +64,6 @@ const SPECIAL_CASE_OPS = {
 };
 
 export {
-  DEFAULT_TEXT,
   EDITOR_OPTIONS,
   CONSOLE,
   DOM_PLAYGROUND,

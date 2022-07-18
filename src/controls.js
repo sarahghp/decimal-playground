@@ -9,6 +9,7 @@ import {
   BIG_DECIMAL,
   DECIMAL_128,
 } from "./constants.js";
+import { EXAMPLES } from "./examples.js";
 
 const panes = [EDITOR, OUTPUT, CONSOLE, DOM_PLAYGROUND];
 
@@ -19,6 +20,8 @@ const Controls = ({
   toggleViewType,
   visibleComponents,
   toggleComponents,
+  selectedExample,
+  loadExample,
 }) => {
   const buttonClass = (item) =>
     visibleComponents.includes(item) ? "on titleItem" : "off titleItem";
@@ -31,6 +34,11 @@ const Controls = ({
   const changeDecimalType = (event) => {
     const val = event.target.value;
     toggleDecimalImpl(val);
+  };
+
+  const changeExample = (event) => {
+    const exampleKey = event.target.value;
+    loadExample(exampleKey);
   };
 
   return (
@@ -66,6 +74,23 @@ const Controls = ({
         >
           <option value={BIG_DECIMAL}>{BIG_DECIMAL}</option>
           <option value={DECIMAL_128}>{DECIMAL_128}</option>
+        </select>
+      </div>
+
+      <div className="titleItem">
+        <p>
+          <label htmlFor="select-example">Example</label>
+        </p>
+        <select
+          id="select-example"
+          value={selectedExample}
+          onChange={changeExample}
+        >
+          {Object.keys(EXAMPLES).map((key) => (
+            <option key={key} value={key}>
+              {key}
+            </option>
+          ))}
         </select>
       </div>
     </>

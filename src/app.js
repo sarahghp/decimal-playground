@@ -15,6 +15,7 @@ import {
   DECIMAL_128,
   DEC_128_PREFIX,
 } from "./constants.js";
+import { BLANK, EXAMPLES } from "./examples.js";
 
 import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
@@ -80,12 +81,13 @@ const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
   window.location.hash = hash;
 };
 
-const App = ({ editorModel, output, configOpts }) => {
+const App = ({ output, configOpts }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
   const [decimalImpl, updateDecimalImpl] = useState(
     configOpts.decimalImpl || DECIMAL_128
   );
+  const [selectedExample, updateExample] = useState(BLANK);
   const [transformedOutput, transformationError] = useTransformedOutput(
     rawInput,
     decimalImpl
@@ -126,6 +128,12 @@ const App = ({ editorModel, output, configOpts }) => {
 
   const toggleViewType = (type) => updateViewType(type);
   const toggleDecimalImpl = (type) => updateDecimalImpl(type);
+  const loadExample = (key) => {
+    updateExample(key);
+    if (key !== BLANK) {
+      updateRawInput(EXAMPLES[key]);
+    }
+  };
 
   useEffect(
     () => updateHash(rawInput, visibleComponents, decimalImpl, viewType),
@@ -146,12 +154,15 @@ const App = ({ editorModel, output, configOpts }) => {
           toggleViewType={toggleViewType}
           visibleComponents={visibleComponents}
           toggleComponents={toggleComponents}
+          selectedExample={selectedExample}
+          loadExample={loadExample}
         />
       </div>
       <div className="row">
         <Editor
+          value={rawInput}
+          updateValue={updateRawInput}
           orderClass={orderClass(EDITOR)}
-          model={editorModel}
           updateOutput={updateOutput}
         />
         <Output
