@@ -26,7 +26,7 @@ try {
 }
 
 monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-  diagnosticCodesToIgnore: [1351, 7027],
+  diagnosticCodesToIgnore: [1005, 1351, 7027],
 });
 
 const editorModel = monaco.editor.createModel(code, "javascript");
