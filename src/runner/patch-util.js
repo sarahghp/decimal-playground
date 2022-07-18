@@ -1,3 +1,5 @@
+/* global Big, Decimal, Decimal128 */
+
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 
 const createPrototypeHandler = (fn) => ({

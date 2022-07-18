@@ -1,3 +1,5 @@
+/* global Big, Decimal, Decimal128 */
+
 const isAllDecimals = (arr) =>
   arr.every((arg) => arg instanceof Decimal128 || arg instanceof Big);
 
