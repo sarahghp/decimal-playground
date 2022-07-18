@@ -19,7 +19,6 @@ Suggestions for playground example code [is currently being sought](https://gith
 
 ### NB: Currently this project is being developed internally by Igalia team members. Please do not open PRs without communicating with project members beforehand.
 
-
 ### Local Server
 
 To run the project locally, run `npm run dev` in a terminal window.

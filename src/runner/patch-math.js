@@ -1,9 +1,12 @@
+/* global Big, Decimal */
+
 import {
   BIG_DECIMAL,
   DECIMAL_128,
   PATCHED_MATH_METHODS,
   UNPATCHED_MATH_METHODS,
 } from "../constants.js";
+import { throwUnimplemented } from "./patch-util.js";
 
 const absImpl = {
   [DECIMAL_128]: Decimal.abs.bind(Decimal),

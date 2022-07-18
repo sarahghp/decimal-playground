@@ -18,8 +18,12 @@ const useDebounce = (value, delay) => {
   return currentValue;
 };
 
-const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
-  const [value, updateValue] = useState(model.getValue());
+const Editor = ({
+  value,
+  updateValue,
+  orderClass,
+  updateOutput = () => {},
+} = {}) => {
   const debouncedValue = useDebounce(value, 500);
 
   const onChange = (newValue) => {
@@ -35,7 +39,7 @@ const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
       <MonacoEditor
         options={EDITOR_OPTIONS}
         onChange={onChange}
-        laguage="javascript"
+        language="javascript"
         value={value}
       />
     </div>

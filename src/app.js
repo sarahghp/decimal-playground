@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { transformAsync, transformSync } from "@babel/core";
+import { transformAsync } from "@babel/core";
 import PresetEnv from "@babel/preset-env";
 import PresetReact from "@babel/preset-react";
 import Dec128 from "../transforms/dec128.js";
@@ -11,11 +11,11 @@ import {
   EDITOR,
   OUTPUT,
   THREE_UP,
-  CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
   DEC_128_PREFIX,
 } from "./constants.js";
+import { BLANK, EXAMPLES } from "./examples.js";
 
 import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
@@ -81,12 +81,13 @@ const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
   window.location.hash = hash;
 };
 
-const App = ({ editorModel, output, configOpts }) => {
+const App = ({ output, configOpts }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
   const [decimalImpl, updateDecimalImpl] = useState(
     configOpts.decimalImpl || DECIMAL_128
   );
+  const [selectedExample, updateExample] = useState(BLANK);
   const [transformedOutput, transformationError] = useTransformedOutput(
     rawInput,
     decimalImpl
@@ -99,7 +100,7 @@ const App = ({ editorModel, output, configOpts }) => {
   /* Component ordering state and functions  */
   const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState(
-    configOpts.visibleComponents || [EDITOR, CONSOLE, DOM_PLAYGROUND]
+    configOpts.visibleComponents || [EDITOR, CONSOLE]
   );
 
   const orderClass = (item) => {
@@ -127,6 +128,12 @@ const App = ({ editorModel, output, configOpts }) => {
 
   const toggleViewType = (type) => updateViewType(type);
   const toggleDecimalImpl = (type) => updateDecimalImpl(type);
+  const loadExample = (key) => {
+    updateExample(key);
+    if (key !== BLANK) {
+      updateRawInput(EXAMPLES[key]);
+    }
+  };
 
   useEffect(
     () => updateHash(rawInput, visibleComponents, decimalImpl, viewType),
@@ -147,12 +154,15 @@ const App = ({ editorModel, output, configOpts }) => {
           toggleViewType={toggleViewType}
           visibleComponents={visibleComponents}
           toggleComponents={toggleComponents}
+          selectedExample={selectedExample}
+          loadExample={loadExample}
         />
       </div>
       <div className="row">
         <Editor
+          value={rawInput}
+          updateValue={updateRawInput}
           orderClass={orderClass(EDITOR)}
-          model={editorModel}
           updateOutput={updateOutput}
         />
         <Output

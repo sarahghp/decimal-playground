@@ -66,7 +66,7 @@ const replaceWithBinaryDecimalExpression = (t, knownDecimalNodes) => (path) => {
     : handleSingleTypeOps(t, knownDecimalNodes, path, opToName);
 
   if (includesIdentifierArgument) {
-    createIdentifierNode(t, knownDecimalNodes, path, transformations);
+    createIdentifierNode(t, path, transformations);
     return;
   }
 

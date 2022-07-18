@@ -1,3 +1,5 @@
+/* global Big, Decimal128 */
+
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 import { dec128Modes, bigDecModes } from "./patch-round.js";
 
@@ -9,7 +11,7 @@ const modes = {
 const coerceObject = (patchedMethodName, val) => {
   if (patchedMethodName === "toPrecision") {
     throw new RangeError(`
-      Value out of range.
+      Value ${val} out of range.
     `);
   }
 

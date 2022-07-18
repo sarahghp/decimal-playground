@@ -1,5 +1,3 @@
-/* globals btoa */
-
 globalThis.run = function (source, console) {
   globalThis.console = console;
 

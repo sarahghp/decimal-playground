@@ -2,7 +2,7 @@ import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 import { round } from "./patch-round.js";
 
 const pow = (impl, decimal, exponent, options) => {
-  const { maximumFractionDigits, roundingMode, errorMessage } = options;
+  const { errorMessage } = options;
 
   if (exponent < 0 || !Number.isInteger(exponent)) {
     throw new RangeError(`

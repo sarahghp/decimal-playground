@@ -3,6 +3,8 @@
   Use only under the greatest duress.
 */
 
+/* global Big, Decimal */
+
 const Decimal128 = Decimal.clone();
 
 const SHARED_SINGLE_OPS = {
@@ -23,7 +25,7 @@ const SHARED_MIXED_OPS = {
 
 const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 
-const binaryExpressionHandler = (left, right, op, message) => {
+globalThis.binaryExpressionHandler = (left, right, op, message) => {
   const leftIsDecimal = isDecInstance(left);
   const rightIsDecimal = isDecInstance(right);
 
@@ -44,14 +46,14 @@ const binaryExpressionHandler = (left, right, op, message) => {
   return Function(`return ${left} ${op} ${right}`)();
 };
 
-const log = (...args) => {
+globalThis.log = (...args) => {
   const updatedArgs = args.map((el) =>
     isDecInstance(el) ? el.toString() : el
   );
   console.log(updatedArgs);
 };
 
-const wrappedConditionalTest = (a) => {
+globalThis.wrappedConditionalTest = (a) => {
   if (isDecInstance(a)) {
     return Number(a);
   }
@@ -59,7 +61,7 @@ const wrappedConditionalTest = (a) => {
   return a;
 };
 
-const wrappedConstructorIdentifier = (a, error) => {
+globalThis.wrappedConstructorIdentifier = (a, error) => {
   if (a === null || a === undefined) {
     throw new TypeError(error);
   }
@@ -81,7 +83,7 @@ const unaryEvaluators = {
   },
 };
 
-const wrappedUnaryHandler = (argument, operator, error) => {
+globalThis.wrappedUnaryHandler = (argument, operator, error) => {
   // TODO: Figure out why Function(`return ${operator} ${argument}`)() fails with typeof
   if (operator === "typeof") {
     return typeof argument;

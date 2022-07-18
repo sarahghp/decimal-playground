@@ -1,13 +1,24 @@
 module.exports = {
   env: {
-    browser: false,
-    "shared-node-browser": true,
+    browser: true,
     es2021: true,
   },
-  extends: ["eslint:recommended", "prettier"],
+  extends: [
+    "eslint:recommended",
+    // "plugin:react/recommended", (see below)
+    "prettier",
+  ],
   parserOptions: {
     ecmaVersion: 13,
     sourceType: "module",
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  rules: {},
+  plugins: ["react"],
+  rules: {
+    // For the time being, only use the following rules from react
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+  },
 };
