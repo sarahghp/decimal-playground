@@ -22,7 +22,7 @@ function snowCactusEscapade(a) {
 const Examples = ({ orderClass, model, updateExampleOutput = () => {} } = {}) => {
 
   return (
-    <div className ={`domPlayground ${orderClass}`} style={{whiteSpace: 'pre-wrap' }}>
+    <div className ={`domPlayground ${orderClass}`} style={{whiteSpace: 'pre-wrap', overflow: 'scroll' }}>
       <h4> Welcome to the Decimal Proposal Playground!</h4>
 
       <p>Test out your Decimal-using code in the editor at your left.</p>
