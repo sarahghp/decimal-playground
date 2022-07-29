@@ -19,7 +19,7 @@ try {
   }
 
   const { content, visibleComponents, decimalImpl, viewType } = data;
-  code = content || DEFAULT_TEXT;
+  code = content || ADDING_WITH_LOGGING.text;
   configOpts = { visibleComponents, decimalImpl, viewType };
 } catch (err) {
   console.error(err);
