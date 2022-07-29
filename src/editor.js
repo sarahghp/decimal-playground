@@ -18,13 +18,17 @@ const useDebounce = (value, delay) => {
   return currentValue;
 };
 
-const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
-  const [value, updateValue] = useState(model.getValue());
+const Editor = ({ orderClass, val, updateOutput = () => {} } = {}) => {
+  const [value, updateValue] = useState(val);
   const debouncedValue = useDebounce(value, 500);
 
   const onChange = (newValue) => {
     updateValue(newValue);
   };
+
+  useEffect(() => {
+    updateValue(val)
+  }, [val])
 
   useEffect(() => {
     updateOutput(debouncedValue);
@@ -35,7 +39,7 @@ const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
       <MonacoEditor
         options={EDITOR_OPTIONS}
         onChange={onChange}
-        laguage="javascript"
+        language="javascript"
         value={value}
       />
     </div>

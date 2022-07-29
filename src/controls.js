@@ -4,13 +4,14 @@ import {
   DOM_PLAYGROUND,
   EDITOR,
   OUTPUT,
+  EXAMPLES,
   THREE_UP,
   CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
 } from "./constants.js";
 
-const panes = [EDITOR, OUTPUT, CONSOLE, DOM_PLAYGROUND];
+const panes = [EDITOR, OUTPUT, EXAMPLES, CONSOLE, DOM_PLAYGROUND];
 
 const Controls = ({
   decimalImpl,

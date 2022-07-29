@@ -48,7 +48,7 @@ const log = (...args) => {
   const updatedArgs = args.map((el) =>
     isDecInstance(el) ? el.toString() : el
   );
-  console.log(updatedArgs);
+  console.log(updatedArgs.join(' '));
 };
 
 const wrappedConditionalTest = (a) => {

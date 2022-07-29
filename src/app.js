@@ -10,6 +10,7 @@ import {
   DOM_PLAYGROUND,
   EDITOR,
   OUTPUT,
+  EXAMPLES,
   THREE_UP,
   CHECKERBOARD,
   BIG_DECIMAL,
@@ -21,6 +22,7 @@ import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
 import { Results } from "./results.js";
 import { Output } from "./output.js";
+import { Examples } from "./example-display.js";
 
 const implementations = {
   [BIG_DECIMAL]: BigDec,
@@ -99,11 +101,13 @@ const App = ({ editorModel, output, configOpts }) => {
   /* Component ordering state and functions  */
   const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState(
-    configOpts.visibleComponents || [EDITOR, CONSOLE, DOM_PLAYGROUND]
+    configOpts.visibleComponents || [EDITOR, EXAMPLES, CONSOLE]
   );
 
   const orderClass = (item) => {
     const n = visibleComponents.findIndex((el) => el === item);
+
+    console.log(item, n);
 
     return n > -1 ? `order-${n} ${layoutClass}` : "collapse";
   };
@@ -112,6 +116,7 @@ const App = ({ editorModel, output, configOpts }) => {
     viewType === THREE_UP ? "columnsView" : "checkerboardView";
 
   const toggleComponents = (item) => {
+    console.log(item);
     const itemPosition = visibleComponents.findIndex((el) => el === item);
 
     if (itemPosition < 0) {
@@ -136,10 +141,6 @@ const App = ({ editorModel, output, configOpts }) => {
   return (
     <>
       <div className="titleRow">
-        <div>
-          <h1>Decimal Playground</h1>
-        </div>
-
         <Controls
           decimalImpl={decimalImpl}
           toggleDecimalImpl={toggleDecimalImpl}
@@ -152,7 +153,7 @@ const App = ({ editorModel, output, configOpts }) => {
       <div className="row">
         <Editor
           orderClass={orderClass(EDITOR)}
-          model={editorModel}
+          val={rawInput}
           updateOutput={updateOutput}
         />
         <Output
@@ -167,6 +168,10 @@ const App = ({ editorModel, output, configOpts }) => {
           content={transformedOutput}
           transError={transformationError}
         />
+        <Examples
+          orderClass={orderClass(EXAMPLES)}
+          updateExampleOutput={updateOutput}
+          />
       </div>
     </>
   );
