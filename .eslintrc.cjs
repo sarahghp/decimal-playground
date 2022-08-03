@@ -17,6 +17,7 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
+    "no-param-reassign": "error",
     // For the time being, only use the following rules from react
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
