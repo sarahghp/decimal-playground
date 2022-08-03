@@ -35,7 +35,7 @@ const Editor = ({ orderClass, model, updateOutput = () => {} } = {}) => {
       <MonacoEditor
         options={EDITOR_OPTIONS}
         onChange={onChange}
-        laguage="javascript"
+        language="javascript"
         value={value}
       />
     </div>
