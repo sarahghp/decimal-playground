@@ -87,6 +87,32 @@
         font-weight: bold;
       }
 
+      .exampleContainer {
+        position: relative;
+        /* so that we can position-absolute .exampleCopyToEditor on top of it */
+      }
+
+      .exampleCopyToEditor {
+        background-color: #c0c0c0;
+        border: none;
+        border-radius: 0.75rem;
+        min-width: 8rem;
+        opacity: 0.25;
+        padding: 0.5rem;
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        transition: background-color 50ms, opacity 200ms;
+      }
+
+      .exampleCopyToEditor:hover {
+        opacity: 1;
+      }
+
+      .exampleCopyToEditor:active {
+        background-color: #a0a0a0;
+      }
+
       .order-1 {
         order: 1;
       }

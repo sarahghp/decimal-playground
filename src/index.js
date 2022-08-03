@@ -29,9 +29,7 @@ monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
   diagnosticCodesToIgnore: [1005, 1351, 7027],
 });
 
-const editorModel = monaco.editor.createModel(code, "javascript");
-
 render(
-  <App editorModel={editorModel} configOpts={configOpts} output={code} />,
+  <App configOpts={configOpts} output={code} />,
   document.getElementById("playground")
 );

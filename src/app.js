@@ -82,7 +82,7 @@ const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
   window.location.hash = hash;
 };
 
-const App = ({ editorModel, output, configOpts }) => {
+const App = ({ output, configOpts }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
   const [decimalImpl, updateDecimalImpl] = useState(
@@ -149,7 +149,7 @@ const App = ({ editorModel, output, configOpts }) => {
       <div className="row">
         <Editor
           orderClass={orderClass(EDITOR)}
-          model={editorModel}
+          val={rawInput}
           updateOutput={updateOutput}
         />
         <Output

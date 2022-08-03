@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus as colorScheme } from "react-syntax-highlighter/dist/esm/styles/prism/index.js";
 // "vscDarkPlus" chosen arbitrarily because it somewhat matches the editor
 // component's colors; "twilight" is also somewhat of a match
 import { EXAMPLES } from "./examples/index.js";
 
-const Examples = ({ orderClass } = {}) => {
+const Examples = ({ orderClass, updateExampleOutput = () => {} } = {}) => {
+  const [showingCopied, setShowingCopied] = useState(null);
+
+  const onCopyToEditorClick = (title, text) => () => {
+    setShowingCopied(title);
+    updateExampleOutput(text);
+    setTimeout(() => {
+      setShowingCopied(null);
+    }, 2000);
+  };
+
   return (
     <section className={`exampleDisplay ${orderClass}`}>
       <h2>Welcome to the Decimal Proposal Playground!</h2>
@@ -55,9 +65,17 @@ const Examples = ({ orderClass } = {}) => {
           <details>
             <summary className="exampleTitle">Example: {title}</summary>
             <p>{description}</p>
-            <SyntaxHighlighter language="javascript" style={colorScheme}>
-              {text}
-            </SyntaxHighlighter>
+            <div className="exampleContainer">
+              <button
+                className="exampleCopyToEditor"
+                onClick={onCopyToEditorClick(title, text)}
+              >
+                {showingCopied === title ? "Copied!" : "Copy to editor"}
+              </button>
+              <SyntaxHighlighter language="javascript" style={colorScheme}>
+                {text}
+              </SyntaxHighlighter>
+            </div>
           </details>
         </section>
       ))}
