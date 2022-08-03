@@ -42,6 +42,7 @@ const CONSOLE = "Console";
 const DOM_PLAYGROUND = "DOM";
 const EDITOR = "Editor";
 const OUTPUT = "Output";
+const EXAMPLES = "Examples";
 const THREE_UP = "columns";
 const CHECKERBOARD = "checkerboard";
 const BIG_DECIMAL = "big decimal";
@@ -94,6 +95,7 @@ export {
   DOM_PLAYGROUND,
   EDITOR,
   OUTPUT,
+  EXAMPLES,
   THREE_UP,
   CHECKERBOARD,
   BIG_DECIMAL,
