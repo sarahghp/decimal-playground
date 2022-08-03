@@ -6,7 +6,7 @@
     "dev": "webpack serve",
     "test": "jest",
     "deploy": "gh-pages -d . -b website",
-    "lint": "prettier -w . && eslint src"
+    "lint": "prettier -w . && eslint src && npm test code-style"
   },
   "babel": {
     "presets": [
@@ -24,18 +24,24 @@
   "jest": {
     "testMatch": [
       "**/test/**/*.[jt]s?(x)"
+    ],
+    "setupFilesAfterEnv": [
+      "./setup-tests.js"
     ]
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.18.9",
+    "@babel/plugin-syntax-decimal": "^7.18.6",
     "@babel/plugin-transform-modules-commonjs": "^7.16.5",
     "babel-plugin-tester": "^10.1.0",
     "big.js": "6.1.1",
     "decimal.js": "10.3.1",
+    "dedent": "^0.7.0",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.30.1",
     "gh-pages": "^3.2.3",
-    "jest": "^27.4.5",
+    "jest": "^28.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "path-browserify": "^1.0.1",
     "prettier": "2.5.1",
@@ -55,6 +61,7 @@
     "react-dom": "^17.0.2",
     "react-inspector": "^5.1.1",
     "react-monaco-editor": "^0.46.0",
+    "react-syntax-highlighter": "^15.5.0",
     "regenerator-runtime": "^0.13.9",
     "style-loader": "^3.3.1",
     "webpack-dev-server": "^4.7.2"

@@ -3,7 +3,7 @@ import React from "react";
 import { render } from "react-dom";
 import { monaco } from "react-monaco-editor";
 import { App } from "./app.js";
-import { DEFAULT_TEXT } from "./constants.js";
+import { ADDING_WITH_LOGGING } from "./examples/index.js";
 
 const hash = window.location.hash;
 console.log(`loading from hash ${hash}`);
@@ -19,7 +19,7 @@ try {
   }
 
   const { content, visibleComponents, decimalImpl, viewType } = data;
-  code = content || DEFAULT_TEXT;
+  code = content ?? ADDING_WITH_LOGGING.text;
   configOpts = { visibleComponents, decimalImpl, viewType };
 } catch (err) {
   console.error(err);

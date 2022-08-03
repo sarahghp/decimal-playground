@@ -1,4 +1,9 @@
 import React from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus as colorScheme } from "react-syntax-highlighter/dist/esm/styles/prism/index.js";
+// "vscDarkPlus" chosen arbitrarily because it somewhat matches the editor
+// component's colors; "twilight" is also somewhat of a match
+import { EXAMPLES } from "./examples/index.js";
 
 const Examples = ({ orderClass } = {}) => {
   return (
@@ -20,6 +25,11 @@ const Examples = ({ orderClass } = {}) => {
       </p>
 
       <p>
+        If you just want to see some code that uses Decimals, try any of the
+        examples below.
+      </p>
+
+      <p>
         We are interested in your feedback! Please{" "}
         <a
           target="blank"
@@ -38,6 +48,19 @@ const Examples = ({ orderClass } = {}) => {
         </a>
         .
       </p>
+
+      {EXAMPLES.map(({ title, description, text }) => (
+        <section key={title}>
+          <hr />
+          <details>
+            <summary className="exampleTitle">Example: {title}</summary>
+            <p>{description}</p>
+            <SyntaxHighlighter language="javascript" style={colorScheme}>
+              {text}
+            </SyntaxHighlighter>
+          </details>
+        </section>
+      ))}
     </section>
   );
 };
