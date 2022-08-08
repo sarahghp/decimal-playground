@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { transformAsync, transformSync } from "@babel/core";
+import { transformAsync } from "@babel/core";
 import PresetEnv from "@babel/preset-env";
 import PresetReact from "@babel/preset-react";
 import Dec128 from "../transforms/dec128.js";
@@ -11,7 +11,6 @@ import {
   EDITOR,
   OUTPUT,
   THREE_UP,
-  CHECKERBOARD,
   BIG_DECIMAL,
   DECIMAL_128,
   DEC_128_PREFIX,

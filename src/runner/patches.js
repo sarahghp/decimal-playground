@@ -1,4 +1,4 @@
-/* global Big, Decimal */
+/* global Big, Decimal, Decimal128 */
 
 import { BIG_DECIMAL, DECIMAL_128 } from "../constants.js";
 import {
@@ -32,7 +32,6 @@ import {
   createPrototypeHandler,
   decimalOnlyBaseFn,
   throwsOnDecimalArg,
-  throwUnimplemented,
   unimplementedButIntended,
 } from "./patch-util.js";
 

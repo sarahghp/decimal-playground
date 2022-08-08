@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useRef, useReducer } from "react";
-import MonacoEditor from "react-monaco-editor";
 import { Console } from "./console.js";
-import { EDITOR_OPTIONS, CONSOLE, DOM_PLAYGROUND } from "./constants.js";
-
-const editorOptions = {
-  ...EDITOR_OPTIONS,
-  readOnly: true,
-};
 
 const CLEAR = "clear";
 const ADD = "add";

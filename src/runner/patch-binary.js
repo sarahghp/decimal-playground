@@ -1,3 +1,5 @@
+/* global Big, Decimal128 */
+
 import { BIG_DECIMAL, DECIMAL_128, SHARED_SINGLE_OPS } from "../constants.js";
 import { round } from "./patch-round.js";
 
@@ -15,11 +17,7 @@ const ops = {
 const binaryImplGenerator =
   (opSymbol) =>
   (name, left, right, options = {}) => {
-    const {
-      maximumFractionDigits,
-      roundingMode,
-      errorMessage = "An unknown error has occurred",
-    } = options;
+    const { errorMessage = "An unknown error has occurred" } = options;
 
     const impl = nameToImpl[name];
 
