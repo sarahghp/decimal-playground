@@ -5,7 +5,8 @@
     "build": "webpack build",
     "dev": "webpack serve",
     "test": "jest",
-    "deploy": "gh-pages -d . -b website"
+    "deploy": "gh-pages -d . -b website",
+    "lint": "prettier -w . && eslint src"
   },
   "babel": {
     "presets": [
@@ -32,6 +33,7 @@
     "decimal.js": "10.3.1",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.30.1",
     "gh-pages": "^3.2.3",
     "jest": "^27.4.5",
     "node-polyfill-webpack-plugin": "^1.1.4",

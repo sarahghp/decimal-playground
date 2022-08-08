@@ -3,23 +3,16 @@
   Use only under the greatest duress.
 */
 
+/* global Big, Decimal */
+
+import { SHARED_SINGLE_OPS, SHARED_MIXED_OPS } from "../constants.js";
+
 const Decimal128 = Decimal.clone();
 
-const SHARED_SINGLE_OPS = {
+const SINGLE_OPS = Object.assign({}, SHARED_SINGLE_OPS, {
   "+": "add",
-  "*": "mul",
-  "-": "sub",
   "/": "div",
-  "%": "mod",
-};
-
-const SHARED_MIXED_OPS = {
-  ">": "gt",
-  ">=": "gte",
-  "<": "lt",
-  "<=": "lte",
-  "==": "eq",
-};
+});
 
 const isDecInstance = (a) => a instanceof Decimal128 || a instanceof Big;
 
@@ -38,7 +31,7 @@ const binaryExpressionHandler = (left, right, op, message) => {
   // Now that we've gotten rid of mixed items, we know that whatever is
   // true of left is also true of right
   if (leftIsDecimal) {
-    return left[SHARED_SINGLE_OPS[op]](right);
+    return left[SINGLE_OPS[op]](right);
   }
 
   return Function(`return ${left} ${op} ${right}`)();
@@ -97,3 +90,17 @@ const wrappedUnaryHandler = (argument, operator, error) => {
 
   return unaryEvaluators[operator](argument);
 };
+
+export default function defineGlobals(global) {
+  // These are the names that we pollute the global namespace with.
+  // Please avoid adding to this list if possible.
+  Object.assign(global, {
+    Decimal128,
+    isDecInstance,
+    binaryExpressionHandler,
+    log,
+    wrappedConditionalTest,
+    wrappedConstructorIdentifier,
+    wrappedUnaryHandler,
+  });
+}
