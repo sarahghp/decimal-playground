@@ -20,18 +20,13 @@ const Examples = ({ orderClass, updateExampleOutput = () => {} } = {}) => {
     <section className={`exampleDisplay ${orderClass}`}>
       <h2>Welcome to the Decimal Proposal Playground!</h2>
 
-      <p>Test out your Decimal-using code in the editor at your left.</p>
+      <p>Test out your Decimal-using code in the editor at your left. It will execute, and any console output will appear in the console.</p>
 
-      <p>
-        It will execute, and any console output will appear in the console on
-        the right.
-      </p>
 
-      <p>To see the transpiled code, click "Toggle Output" above.</p>
 
-      <p>
+      <p>To see the transpiled code, click <span className="highlight">Toggle Output</span> above. 
         You can also manipulate the DOM from this code, and see the results with
-        "Toggle DOM".
+        <span className="highlight"> Toggle DOM</span>.
       </p>
 
       <p>
