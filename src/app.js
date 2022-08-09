@@ -9,6 +9,7 @@ import {
   CONSOLE,
   DOM_PLAYGROUND,
   EDITOR,
+  EXAMPLES,
   OUTPUT,
   THREE_UP,
   BIG_DECIMAL,
@@ -20,6 +21,7 @@ import { Controls } from "./controls.js";
 import { Editor } from "./editor.js";
 import { Results } from "./results.js";
 import { Output } from "./output.js";
+import { Examples } from "./example-display.js";
 
 const implementations = {
   [BIG_DECIMAL]: BigDec,
@@ -80,7 +82,7 @@ const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
   window.location.hash = hash;
 };
 
-const App = ({ editorModel, output, configOpts }) => {
+const App = ({ output, configOpts }) => {
   /* Code transform state and functions  */
   const [rawInput, updateRawInput] = useState(output);
   const [decimalImpl, updateDecimalImpl] = useState(
@@ -98,7 +100,7 @@ const App = ({ editorModel, output, configOpts }) => {
   /* Component ordering state and functions  */
   const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState(
-    configOpts.visibleComponents || [EDITOR, CONSOLE, DOM_PLAYGROUND]
+    configOpts.visibleComponents || [EDITOR, EXAMPLES, CONSOLE]
   );
 
   const orderClass = (item) => {
@@ -135,10 +137,6 @@ const App = ({ editorModel, output, configOpts }) => {
   return (
     <>
       <div className="titleRow">
-        <div>
-          <h1>Decimal Playground</h1>
-        </div>
-
         <Controls
           decimalImpl={decimalImpl}
           toggleDecimalImpl={toggleDecimalImpl}
@@ -151,7 +149,7 @@ const App = ({ editorModel, output, configOpts }) => {
       <div className="row">
         <Editor
           orderClass={orderClass(EDITOR)}
-          model={editorModel}
+          val={rawInput}
           updateOutput={updateOutput}
         />
         <Output
@@ -165,6 +163,10 @@ const App = ({ editorModel, output, configOpts }) => {
           }}
           content={transformedOutput}
           transError={transformationError}
+        />
+        <Examples
+          orderClass={orderClass(EXAMPLES)}
+          updateExampleOutput={updateOutput}
         />
       </div>
     </>
