@@ -6,7 +6,6 @@ import Dec128 from "../transforms/dec128.js";
 import BigDec from "../transforms/bigdec.js";
 
 import {
-  CHECKERBOARD,
   CONSOLE,
   DOM_PLAYGROUND,
   EDITOR,
@@ -99,9 +98,7 @@ const App = ({ output, configOpts }) => {
   };
 
   /* Component ordering state and functions  */
-  const [viewType, updateViewType] = useState(
-    configOpts.viewType || CHECKERBOARD
-  );
+  const [viewType, updateViewType] = useState(configOpts.viewType || THREE_UP);
   const [visibleComponents, updateVisisbleComponents] = useState(
     configOpts.visibleComponents || [EDITOR, EXAMPLES, CONSOLE]
   );
