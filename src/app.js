@@ -99,7 +99,9 @@ const App = ({ output, configOpts }) => {
   };
 
   /* Component ordering state and functions  */
-  const [viewType, updateViewType] = useState(configOpts.viewType || CHECKERBOARD);
+  const [viewType, updateViewType] = useState(
+    configOpts.viewType || CHECKERBOARD
+  );
   const [visibleComponents, updateVisisbleComponents] = useState(
     configOpts.visibleComponents || [EDITOR, EXAMPLES, CONSOLE]
   );
