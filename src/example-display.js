@@ -21,12 +21,15 @@ const Examples = ({ orderClass, updateExampleOutput = () => {} } = {}) => {
       <div className="exampleTextContainer">
         <h2>Welcome to the Decimal Proposal Playground!</h2>
 
-        <p>Test out your Decimal-using code in the editor at your left. It will execute, and any console output will appear in the console.</p>
+        <p>
+          Test out your Decimal-using code in the editor at your left. It will
+          execute, and any console output will appear in the console.
+        </p>
 
-
-
-        <p>To see the transpiled code, click <span className="highlight">Toggle Output</span> above.
-          You can also manipulate the DOM from this code, and see the results with
+        <p>
+          To see the transpiled code, click{" "}
+          <span className="highlight">Toggle Output</span> above. You can also
+          manipulate the DOM from this code, and see the results with
           <span className="highlight"> Toggle DOM</span>.
         </p>
 
