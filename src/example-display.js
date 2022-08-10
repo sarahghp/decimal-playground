@@ -18,62 +18,64 @@ const Examples = ({ orderClass, updateExampleOutput = () => {} } = {}) => {
 
   return (
     <section className={`exampleDisplay ${orderClass}`}>
-      <h2>Welcome to the Decimal Proposal Playground!</h2>
+      <div className="exampleTextContainer">
+        <h2>Welcome to the Decimal Proposal Playground!</h2>
 
-      <p>Test out your Decimal-using code in the editor at your left. It will execute, and any console output will appear in the console.</p>
+        <p>Test out your Decimal-using code in the editor at your left. It will execute, and any console output will appear in the console.</p>
 
 
 
-      <p>To see the transpiled code, click <span className="highlight">Toggle Output</span> above. 
-        You can also manipulate the DOM from this code, and see the results with
-        <span className="highlight"> Toggle DOM</span>.
-      </p>
+        <p>To see the transpiled code, click <span className="highlight">Toggle Output</span> above.
+          You can also manipulate the DOM from this code, and see the results with
+          <span className="highlight"> Toggle DOM</span>.
+        </p>
 
-      <p>
-        If you just want to see some code that uses Decimals, try any of the
-        examples below.
-      </p>
+        <p>
+          If you just want to see some code that uses Decimals, try any of the
+          examples below.
+        </p>
 
-      <p>
-        We are interested in your feedback! Please{" "}
-        <a
-          target="blank"
-          title="Opens in a new tab"
-          href="https://github.com/tc39/proposal-decimal"
-        >
-          fill out our survey
-        </a>{" "}
-        or post issues to{" "}
-        <a
-          target="blank"
-          title="Opens in a new tab"
-          href="https://github.com/tc39/proposal-decimal"
-        >
-          the proposal repository
-        </a>
-        .
-      </p>
+        <p>
+          We are interested in your feedback! Please{" "}
+          <a
+            target="blank"
+            title="Opens in a new tab"
+            href="https://github.com/tc39/proposal-decimal"
+          >
+            fill out our survey
+          </a>{" "}
+          or post issues to{" "}
+          <a
+            target="blank"
+            title="Opens in a new tab"
+            href="https://github.com/tc39/proposal-decimal"
+          >
+            the proposal repository
+          </a>
+          .
+        </p>
 
-      {EXAMPLES.map(({ title, description, text }) => (
-        <section key={title}>
-          <hr />
-          <details>
-            <summary className="exampleTitle">Example: {title}</summary>
-            <p>{description}</p>
-            <div className="exampleContainer">
-              <button
-                className="exampleCopyToEditor"
-                onClick={onCopyToEditorClick(title, text)}
-              >
-                {showingCopied === title ? "Copied!" : "Copy to editor"}
-              </button>
-              <SyntaxHighlighter language="javascript" style={colorScheme}>
-                {text}
-              </SyntaxHighlighter>
-            </div>
-          </details>
-        </section>
-      ))}
+        {EXAMPLES.map(({ title, description, text }) => (
+          <section key={title}>
+            <hr />
+            <details>
+              <summary className="exampleTitle">Example: {title}</summary>
+              <p>{description}</p>
+              <div className="exampleContainer">
+                <button
+                  className="exampleCopyToEditor"
+                  onClick={onCopyToEditorClick(title, text)}
+                >
+                  {showingCopied === title ? "Copied!" : "Copy to editor"}
+                </button>
+                <SyntaxHighlighter language="javascript" style={colorScheme}>
+                  {text}
+                </SyntaxHighlighter>
+              </div>
+            </details>
+          </section>
+        ))}
+      </div>
     </section>
   );
 };
