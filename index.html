@@ -6,13 +6,14 @@
     <script src="./dist/bundle.js" charset="utf-8" type="module"></script>
     <title>Decimal Proposal Playground</title>
     <style>
-      html {
-        font-family: monospace;
+      * {
+        box-sizing: border-box;
       }
 
       body {
         background-color: rgb(30, 30, 30);
         color: LavenderBlush;
+        font-family: "SF Pro", Roboto, sans-serif;
       }
 
       button {
@@ -71,11 +72,11 @@
 
       .exampleDisplay {
         flex: 1;
-        font-family: serif;
-        font-size: 1.4rem;
+        background-color: #3d3d43;
+        font-size: 1.1rem;
+        line-height: 1.4;
         max-height: 85vh;
         overflow: scroll;
-        padding: 0 1rem 2rem;
       }
 
       .exampleDisplay a {
@@ -83,8 +84,9 @@
       }
 
       .exampleTitle {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
         font-weight: bold;
+        cursor: pointer;
       }
 
       .exampleContainer {
@@ -111,6 +113,22 @@
 
       .exampleCopyToEditor:active {
         background-color: #a0a0a0;
+      }
+
+      .exampleTextContainer {
+        margin: 0 1rem 2rem;
+      }
+
+      .highlight {
+        color: salmon;
+      }
+
+      .console,
+      .domPlayground,
+      .editorWrapper,
+      .exampleTextContainer {
+        border-top: 1px #53535c solid;
+        border-right: 1px #53535c solid;
       }
 
       .order-1 {
@@ -147,7 +165,6 @@
         width: 100vw;
         justify-content: space-evenly;
         align-items: self-end;
-        border-bottom: 1px #53535c solid;
       }
 
       .titleItem {
@@ -156,7 +173,7 @@
 
       .columnsView {
         min-width: 400px;
-        min-height: 70vh;
+        min-height: 80vh;
       }
 
       .checkerboardView {
