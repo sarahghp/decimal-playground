@@ -52,6 +52,7 @@ const useTransformedOutput = (code, decimalImpl) => {
         const result = await transformAsync(prefixedCode, {
           ...babelOptions,
           plugins: [[implementations[decimalImpl]]],
+          passPerPreset: true, // FIXME: this is a workaround
         });
         setTransformed(result.code);
         setTransformationError(null);

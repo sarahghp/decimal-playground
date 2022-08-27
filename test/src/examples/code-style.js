@@ -10,6 +10,8 @@ EXAMPLES.forEach(({ title, text }) => {
         globals: {
           Decimal: "readonly",
           log: "readonly",
+          React: "readonly",
+          ReactDOM: "readonly",
         },
         parser: "@babel/eslint-parser",
         parserOptions: {
