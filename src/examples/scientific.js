@@ -1,7 +1,7 @@
 import dedent from "dedent";
 
 export const SCIENTIFIC_NOTATION = {
-  title: "Scientific notation",
+  title: "In Action: Scientific Notation",
   description: `Format a Decimal using scientific notation. (This example
   currently only works with Decimal128, since Math.log10 for BigDecimal is not
   yet implemented.)`,
