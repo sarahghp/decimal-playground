@@ -58,11 +58,13 @@ const Examples = ({ orderClass, updateExampleOutput = () => {} } = {}) => {
           .
         </p>
 
+        <h3 className="highlight">Examples</h3>
+
         {EXAMPLES.map(({ title, description, text }) => (
           <section key={title}>
             <hr />
             <details>
-              <summary className="exampleTitle">Example: {title}</summary>
+              <summary className="exampleTitle">{title}</summary>
               <p>{description}</p>
               <div className="exampleContainer">
                 <button
