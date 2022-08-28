@@ -1,7 +1,7 @@
 import dedent from "dedent";
 
 export const ADDING_WITH_LOGGING = {
-  title: "Adding with Logging",
+  title: "Using the Playground: Adding with Logging",
   description: `This is a basic example showing how Decimal literals work, and
   the quirks of logging them in this playground environment.`,
   text: dedent`
