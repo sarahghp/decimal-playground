@@ -90,7 +90,6 @@ const updateHash = (
   } catch (error) {
     setHashError(error);
   }
-
 };
 
 const App = ({ output, configOpts }) => {
