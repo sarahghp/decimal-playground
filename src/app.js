@@ -68,7 +68,13 @@ const useTransformedOutput = (code, decimalImpl) => {
   return [transformed, transformationError];
 };
 
-const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
+const updateHash = (
+  rawInput,
+  visibleComponents,
+  decimalImpl,
+  viewType,
+  setHashError
+) => {
   const data = {
     content: rawInput,
     visibleComponents,
@@ -77,9 +83,14 @@ const updateHash = (rawInput, visibleComponents, decimalImpl, viewType) => {
   };
 
   const json = JSON.stringify(data);
-  const hash = btoa(json);
 
-  window.location.hash = hash;
+  try {
+    window.location.hash = btoa(json);
+    setHashError(null);
+  } catch (error) {
+    setHashError(error);
+  }
+
 };
 
 const App = ({ output, configOpts }) => {
@@ -129,9 +140,17 @@ const App = ({ output, configOpts }) => {
   const toggleViewType = (type) => updateViewType(type);
   const toggleDecimalImpl = (type) => updateDecimalImpl(type);
 
+  const [hashError, setHashError] = useState(null);
   useEffect(
-    () => updateHash(rawInput, visibleComponents, decimalImpl, viewType),
-    [rawInput, visibleComponents, decimalImpl, viewType]
+    () =>
+      updateHash(
+        rawInput,
+        visibleComponents,
+        decimalImpl,
+        viewType,
+        setHashError
+      ),
+    [rawInput, visibleComponents, decimalImpl, viewType, setHashError]
   );
 
   return (
@@ -162,7 +181,7 @@ const App = ({ output, configOpts }) => {
             DOM_PLAYGROUND: orderClass(DOM_PLAYGROUND),
           }}
           content={transformedOutput}
-          transError={transformationError}
+          transError={transformationError || hashError}
         />
         <Examples
           orderClass={orderClass(EXAMPLES)}
